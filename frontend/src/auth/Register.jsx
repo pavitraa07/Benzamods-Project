@@ -5,9 +5,9 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const API_BASE = process.env.REACT_APP_API_BASE;
 
-const sendOtpApi = (email) => axios.post(`${API_BASE}/send-otp`, { email });
-const verifyOtpApi = (email, otp) => axios.post(`${API_BASE}/verify-otp`, { email, otp });
-const registerUserApi = (data) => axios.post(`${API_BASE}/register`, data);
+const sendOtpApi = (email) => axios.post(`${API_BASE}/auth/send-otp`, { email });
+const verifyOtpApi = (email, otp) => axios.post(`${API_BASE}/auth/verify-otp`, { email, otp });
+const registerUserApi = (data) => axios.post(`${API_BASE}/auth/register`, data);
 
 const containerStyle = {
   display: "flex",

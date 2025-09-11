@@ -8,7 +8,7 @@ function ClientCarousel() {
   const [animate, setAnimate] = useState(false);
 
 async function getReviews() {
-  const res = await fetch(`${API_BASE}/reviews`);
+  const res = await fetch(`${API_BASE}/portfolio/reviews`);
   return res.json();
 }
 
@@ -122,7 +122,6 @@ useEffect(() => {
             <div style={starsStyle}>{"★".repeat(reviews[current].rating)}</div>
             <p style={textStyle}>{reviews[current].text}</p>
 
-            {/* Images */}
             <div style={imagesContainerStyle}>
               {reviews[current].beforeImage && (
                 <img
