@@ -34,8 +34,8 @@ function AdminPanel() {
   };
 
   return (
-    <div style={pageStyle}>
-      <div style={formCardStyle}>
+    <div style={pageStyle} className="page">
+      <div style={formCardStyle} className="form-card">
         <h2 style={{ marginBottom: "15px", color: "#fff" }}>Admin Login</h2>
         <form onSubmit={handleSubmit} style={formStyle}>
           <input
@@ -45,6 +45,7 @@ function AdminPanel() {
             onChange={(e) => setForm({ ...form, username: e.target.value })}
             style={inputStyle}
             required
+            className="input-animated"
           />
           <input
             type="password"
@@ -53,13 +54,61 @@ function AdminPanel() {
             onChange={(e) => setForm({ ...form, password: e.target.value })}
             style={inputStyle}
             required
+            className="input-animated"
           />
           {error && <p style={{ color: "red", fontSize: "14px" }}>{error}</p>}
-          <button type="submit" style={buttonStyle}>
+          <button type="submit" style={buttonStyle} className="btn-animated">
             Login
           </button>
         </form>
       </div>
+
+      <style>
+        {`
+          /* Page fade-in */
+          .page {
+            animation: fadeIn 0.6s ease-in forwards;
+            opacity: 0;
+            background: #000;   
+            min-height: 100vh; 
+          }
+          @keyframes fadeIn {
+            to {
+              opacity: 1;
+            }
+          }
+
+          /* Card scale + fade-in */
+          .form-card {
+            animation: popIn 0.6s ease-out forwards;
+            transform: scale(0.8);
+            opacity: 0;
+          }
+          @keyframes popIn {
+            to {
+              transform: scale(1);
+              opacity: 1;
+            }
+          }
+
+          /* Input focus glow */
+          .input-animated:focus {
+            outline: none;
+            border-color: #888;
+            box-shadow: 0 0 8px #888;
+            transition: all 0.3s ease;
+          }
+
+          /* Button hover scale + smooth transition */
+          .btn-animated {
+            transition: transform 0.2s ease, background 0.3s ease;
+          }
+          .btn-animated:hover {
+            transform: scale(1.05);
+            background: #ddd;
+          }
+        `}
+      </style>
     </div>
   );
 }
