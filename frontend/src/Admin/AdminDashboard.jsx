@@ -89,15 +89,17 @@ function AdminDashboard() {
     }
   };
 
-useEffect(() => {
-  if (activeSection === "dashboard") {
-    fetchCounts();
-  }
-}, [activeSection]);
+  useEffect(() => {
+    if (activeSection === "dashboard") {
+      fetchCounts();
+    }
+  }, [activeSection]);
 
-
-  const Circle = ({ title, count }) => (
-    <div style={circleStyle}>
+  const Circle = ({ title, count, index }) => (
+    <div
+      className="circle"
+      style={{ ...circleStyle, animationDelay: `${index * 0.15}s` }}
+    >
       <div style={circleNumber}>{count}</div>
       <div style={circleTitle}>{title}</div>
     </div>
@@ -128,8 +130,8 @@ useEffect(() => {
           ☰
         </button>
         {isMobileSidebarOpen && (
-          <div style={mobileSidebarOverlay}>
-            <div style={mobileSidebar}>
+          <div style={mobileSidebarOverlay} className="mobile-overlay">
+            <div style={mobileSidebar} className="mobile-sidebar-enter-active">
               <button
                 onClick={() => setIsMobileSidebarOpen(false)}
                 style={{
@@ -189,17 +191,17 @@ useEffect(() => {
 
         {activeSection === "dashboard" && (
           <div style={analyticsContainer}>
-            <Circle title="Products" count={productCount} />
-            <Circle title="Services" count={serviceCount} />
-            <Circle title="Priority Services" count={priorityCount} />
-            <Circle title="Orders" count={orderCount} />
-            <Circle title="Contacts" count={contactCount} />
-            <Circle title="Admins" count={adminCount} />
-            <Circle title="Users" count={userCount} />
-            <Circle title="Portfolio Products" count={portfolioCounts.products} />
-            <Circle title="Portfolio Services" count={portfolioCounts.services} />
-            <Circle title="Portfolio Projects" count={portfolioCounts.projects} />
-            <Circle title="Portfolio Reviews" count={portfolioCounts.reviews} />
+            <Circle title="Products" count={productCount} index={0} />
+            <Circle title="Services" count={serviceCount} index={1} />
+            <Circle title="Priority Services" count={priorityCount} index={2} />
+            <Circle title="Orders" count={orderCount} index={3} />
+            <Circle title="Contacts" count={contactCount} index={4} />
+            <Circle title="Admins" count={adminCount} index={5} />
+            <Circle title="Users" count={userCount} index={6} />
+            <Circle title="Portfolio Products" count={portfolioCounts.products} index={7} />
+            <Circle title="Portfolio Services" count={portfolioCounts.services} index={8} />
+            <Circle title="Portfolio Projects" count={portfolioCounts.projects} index={9} />
+            <Circle title="Portfolio Reviews" count={portfolioCounts.reviews} index={10} />
           </div>
         )}
 
@@ -215,7 +217,7 @@ useEffect(() => {
         
         {showLogoutModal && (
           <div style={modalOverlayStyle}>
-            <div style={modalStyle}>
+            <div style={modalStyle} className="modal">
               <h3>Are you sure you want to logout?</h3>
               <div
                 style={{
@@ -261,6 +263,86 @@ useEffect(() => {
               display: block;
             }
           }
+
+          /* Circle pop-in animation with stagger */
+          .circle {
+            animation: popIn 0.6s ease forwards;
+            transform: scale(0.7);
+            opacity: 0;
+          }
+          @keyframes popIn {
+            to {
+              transform: scale(1);
+              opacity: 1;
+            }
+          }
+
+          /* Mobile sidebar slide-in */
+          .mobile-sidebar {
+            transform: translateX(-100%);
+            animation: slideIn 0.4s forwards;
+          }
+          @keyframes slideIn {
+            to {
+              transform: translateX(0);
+            }
+          }
+
+          /* Modal fade + scale */
+          .modal {
+            animation: fadeScale 0.3s ease forwards;
+            transform: scale(0.8);
+            opacity: 0;
+          }
+          @keyframes fadeScale {
+            to {
+              transform: scale(1);
+              opacity: 1;
+            }
+          }
+                    /* Desktop sidebar fade + slide */
+        .sidebar-desktop {
+          animation: sidebarDesktopSlide 0.5s ease forwards;
+          transform: translateX(-20px);
+          opacity: 0;
+        }
+        @keyframes sidebarDesktopSlide {
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+
+        /* Mobile sidebar slide-in and slide-out */
+        .mobile-sidebar-enter {
+          transform: translateX(-100%);
+          opacity: 0;
+        }
+        .mobile-sidebar-enter-active {
+          transform: translateX(0);
+          opacity: 1;
+          transition: transform 0.4s ease, opacity 0.4s ease;
+        }
+        .mobile-sidebar-exit {
+          transform: translateX(0);
+          opacity: 1;
+        }
+        .mobile-sidebar-exit-active {
+          transform: translateX(-100%);
+          opacity: 0;
+          transition: transform 0.4s ease, opacity 0.4s ease;
+        }
+
+        /* Overlay fade effect for mobile */
+        .mobile-overlay {
+          animation: fadeOverlay 0.4s ease forwards;
+          opacity: 0;
+        }
+        @keyframes fadeOverlay {
+          to {
+            opacity: 1;
+          }
+        }
         `}
       </style>
     </div>
