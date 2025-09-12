@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ClipLoader from "react-spinners/ClipLoader";
 import { Helmet } from "react-helmet";
@@ -12,58 +12,44 @@ const API_BASE = process.env.REACT_APP_API_BASE;
 function ShopByCar() {
   const [products, setProducts] = useState([]);
   const [filtered, setFiltered] = useState([]);
-  const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(100000);
   const [loadingImages, setLoadingImages] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
-
   const navigate = useNavigate();
 
-  const fetchAllProducts = useCallback(async () => {
+  const fetchAllProducts = async () => {
     try {
-      const res = await fetch(`${API_BASE}/products`);
-      if (!res.ok) throw new Error("Failed to fetch products");
-      const data = await res.json();
+      const response = await fetch(`${API_BASE}/products`);
+      if (!response.ok) throw new Error("Failed to fetch products");
+      const data = await response.json();
       return data;
     } catch (err) {
       console.error("Error fetching products:", err);
       return [];
     }
-  }, []);
-
-  const fetchCars = useCallback(async () => {
-    const allProducts = await fetchAllProducts();
-    const cars = allProducts.filter((p) => p.category.toLowerCase() === "car");
-    setProducts(cars);
-    setFiltered(cars);
-
-    const initialLoading = {};
-    cars.forEach((car) => {
-      if (car.image) initialLoading[car._id] = true;
-    });
-    setLoadingImages(initialLoading);
-
-    return cars;
-  }, [fetchAllProducts]);
-
+  };
 
   useEffect(() => {
+    const fetchCars = async () => {
+      const allProducts = await fetchAllProducts();
+      const cars = allProducts.filter((p) => p.category.toLowerCase() === "car");
+      setProducts(cars);
+      setFiltered(cars);
+    };
     fetchCars();
-  }, [fetchCars]);
+  }, []);
 
   useEffect(() => {
     setFiltered(
       products.filter(
         (p) =>
-          p.price >= minPrice &&
           p.price <= maxPrice &&
-          p.name.toLowerCase().startsWith(searchTerm.toLowerCase())
+          p.name.toLowerCase().includes(searchTerm.toLowerCase())
       )
     );
-  }, [searchTerm, minPrice, maxPrice, products]);
+  }, [products, maxPrice, searchTerm]);
 
   const resetFilter = () => {
-    setMinPrice(0);
     setMaxPrice(100000);
     setSearchTerm("");
     setFiltered(products);
@@ -80,21 +66,21 @@ function ShopByCar() {
           <title>Shop by Car | Premium Car Accessories & Upgrades</title>
           <meta
             name="description"
-            content="Explore and shop premium car accessories, upgrades, and performance parts. Filter by price, search easily, and find the best fit for your vehicle."
+            content="Browse premium car accessories, performance upgrades, and parts. Use filters and search to quickly find the best products for your car."
           />
           <meta
             name="keywords"
-            content="shop by car, car accessories, car upgrades, car parts, vehicle tuning, premium auto parts, car performance"
+            content="shop by car, car accessories, car upgrades, car parts, performance parts, premium car gear"
           />
           <meta property="og:title" content="Shop by Car" />
           <meta
             property="og:description"
-            content="Browse premium car products including accessories, upgrades, and performance parts with advanced filters and search."
+            content="Shop premium car accessories and upgrades with advanced search and price filters."
           />
           <meta name="author" content="Your Company Name" />
         </Helmet>
 
-        {/* Heading + Search */}
+        {/* Header + Search */}
         <div
           style={{
             display: "flex",
@@ -113,7 +99,6 @@ function ShopByCar() {
               fontWeight: "bold",
               letterSpacing: "1px",
               margin: "0",
-              animation: "fadeInDown 1s ease",
             }}
           >
             🚗 Shop by Car
@@ -123,40 +108,67 @@ function ShopByCar() {
             placeholder="🔍 Search cars..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            style={searchBarStyle}
+            style={{
+              padding: "10px 18px",
+              borderRadius: "20px",
+              border: "2px solid #33cc33",
+              background: "rgba(255,255,255,0.08)",
+              color: "#fff",
+              fontSize: "15px",
+              outline: "none",
+              width: "220px",
+              transition: "0.3s",
+            }}
           />
         </div>
 
-        {/* Filter Controls */}
+        {/* Filter Controls (same as ShopByBike) */}
         <div
           style={{
-            marginBottom: "50px",
+            marginBottom: "40px",
             display: "flex",
+            flexDirection: "column",
             justifyContent: "center",
             alignItems: "center",
-            gap: "15px",
-            flexWrap: "wrap",
-            padding: "20px",
-            borderRadius: "15px",
-            boxShadow: "0 8px 20px rgba(0,0,0,0.5)",
+            gap: "8px",
+            padding: "15px",
+            borderRadius: "12px",
+            background: "rgba(255,255,255,0.05)",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
           }}
         >
+          <label style={{ color: "#fff", fontSize: "15px" }}>
+            💰 Show products under:{" "}
+            <b style={{ color: "#33cc33" }}>₹{maxPrice.toLocaleString()}</b>
+          </label>
           <input
-            type="number"
-            placeholder="Min Price"
-            value={minPrice}
-            onChange={(e) => setMinPrice(Number(e.target.value))}
-            style={inputStyleMinMax(true)}
-          />
-          <span style={{ color: "#fff", fontSize: "18px" }}>—</span>
-          <input
-            type="number"
-            placeholder="Max Price"
+            type="range"
+            min="0"
+            max="100000"
+            step="1000"
             value={maxPrice}
             onChange={(e) => setMaxPrice(Number(e.target.value))}
-            style={inputStyleMinMax(false)}
+            style={{
+              width: "220px",
+              accentColor: "#33cc33",
+              cursor: "pointer",
+            }}
           />
-          <button onClick={resetFilter} style={resetButtonStyle}>
+          <button
+            onClick={resetFilter}
+            style={{
+              marginTop: "5px",
+              padding: "6px 16px",
+              borderRadius: "8px",
+              border: "none",
+              background: "linear-gradient(135deg, #020203ff, #000002ff)",
+              fontWeight: "600",
+              fontSize: "13px",
+              cursor: "pointer",
+              color: "#fff",
+              transition: "all 0.3s",
+            }}
+          >
             Reset
           </button>
         </div>
@@ -170,54 +182,105 @@ function ShopByCar() {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-              gap: "30px",
+              gridTemplateColumns: "repeat(4, 1fr)",
+              gap: "25px",
             }}
           >
-            {filtered.map((product, index) => (
+            {filtered.map((product) => (
               <div
                 key={product._id}
+                className="product-card"
                 onClick={() =>
                   navigate("/order", { state: { singleProduct: product } })
                 }
-                className="product-card"
                 style={{
-                  ...productCardStyle,
-                  animation: `fadeInUp 0.8s ease ${index * 0.1}s forwards`,
-                  opacity: 0,
+                  cursor: "pointer",
+                  background: "rgba(255,255,255,0.05)",
+                  borderRadius: "20px",
+                  overflow: "hidden",
+                  boxShadow: "0 8px 25px rgba(0,0,0,0.5)",
+                  transition: "0.3s all",
+                  textAlign: "center",
+                  border: "3px solid #fff",
+                  position: "relative",
                 }}
               >
-                {product.image && loadingImages[product._id] && (
-                  <div style={loaderOverlayStyle}>
-                    <ClipLoader color="#ff4c4c" />
+                {loadingImages[product._id] && (
+                  <div
+                    style={{
+                      position: "absolute",
+                      inset: 0,
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      background: "rgba(0,0,0,0.5)",
+                      zIndex: 1,
+                    }}
+                  >
+                    <ClipLoader color="#33cc33" />
                   </div>
                 )}
-
                 {product.image && (
                   <LazyLoadImage
                     src={product.image}
                     alt={product.name}
+                    effect="blur"
                     beforeLoad={() =>
-                      setLoadingImages((prev) => ({ ...prev, [product._id]: true }))
+                      setLoadingImages((prev) => ({
+                        ...prev,
+                        [product._id]: true,
+                      }))
                     }
                     afterLoad={() =>
-                      setLoadingImages((prev) => ({ ...prev, [product._id]: false }))
+                      setLoadingImages((prev) => ({
+                        ...prev,
+                        [product._id]: false,
+                      }))
                     }
                     onError={() =>
-                      setLoadingImages((prev) => ({ ...prev, [product._id]: false }))
+                      setLoadingImages((prev) => ({
+                        ...prev,
+                        [product._id]: false,
+                      }))
                     }
-                    style={productImageStyle}
+                    style={{
+                      width: "100%",
+                      height: "330px",
+                      objectFit: "cover",
+                      transition: "0.3s",
+                    }}
                   />
                 )}
-
                 <div style={{ padding: "20px", color: "#fff" }}>
-                  <h2 style={productTitleStyle}>{product.name}</h2>
-                  <p style={productDescStyle}>
+                  <h2
+                    style={{
+                      fontSize: "20px",
+                      marginBottom: "8px",
+                      fontWeight: "600",
+                    }}
+                  >
+                    {product.name}
+                  </h2>
+                  <p
+                    style={{
+                      fontSize: "14px",
+                      color: "#aaa",
+                      marginBottom: "10px",
+                    }}
+                  >
                     {product.description
                       ? truncateText(product.description, 70)
                       : "No description available."}
                   </p>
-                  <p style={productPriceStyle}>₹{product.price}</p>
+                  <p
+                    style={{
+                      fontSize: "16px",
+                      color: "#33cc33",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    ₹{product.price}
+                  </p>
                 </div>
               </div>
             ))}
@@ -226,21 +289,14 @@ function ShopByCar() {
 
         <style>
           {`
-            @keyframes fadeInDown {
-              from { opacity: 0; transform: translateY(-40px); }
-              to { opacity: 1; transform: translateY(0); }
-            }
-            @keyframes fadeInUp {
-              from { opacity: 0; transform: translateY(40px); }
-              to { opacity: 1; transform: translateY(0); }
-            }
             .product-card:hover {
-              transform: translateY(-10px) scale(1.05);
-              box-shadow: 0 18px 50px rgba(255, 77, 77, 0.6);
-              border: 2px solid #ff4c4c;
+              transform: translateY(-8px) scale(1.04);
+              box-shadow: 0 14px 40px rgba(77, 204, 77, 0.6);
+              border: 2px solid #33cc33;
             }
+
             .product-card img:hover {
-              transform: scale(1.08);
+              transform: scale(1.06);
             }
           `}
         </style>
@@ -249,89 +305,5 @@ function ShopByCar() {
     </>
   );
 }
-
-const searchBarStyle = {
-  padding: "12px 20px",
-  borderRadius: "30px",
-  border: "2px solid #ff4c4c",
-  background: "rgba(255,255,255,0.08)",
-  color: "#fff",
-  fontSize: "16px",
-  outline: "none",
-  width: "250px",
-  transition: "0.3s",
-};
-
-const inputStyleMinMax = (isMin) => ({
-  padding: "14px 20px",
-  borderRadius: "12px",
-  border: `1px solid ${isMin ? "#ff4d4d" : "#33cc33"}`,
-  background: "rgba(255,255,255,0.08)",
-  color: "#fff",
-  fontSize: "16px",
-  outline: "none",
-  width: "140px",
-  textAlign: "center",
-  transition: "0.3s",
-});
-
-const resetButtonStyle = {
-  padding: "12px 28px",
-  borderRadius: "12px",
-  border: "none",
-  background: "linear-gradient(135deg, #8888ff, #4444ff)",
-  fontWeight: "600",
-  fontSize: "16px",
-  cursor: "pointer",
-  color: "#fff",
-  transition: "all 0.3s",
-};
-
-const productCardStyle = {
-  cursor: "pointer",
-  background: "rgba(255,255,255,0.05)",
-  borderRadius: "20px",
-  overflow: "hidden",
-  boxShadow: "0 8px 25px rgba(0,0,0,0.5)",
-  transition: "0.3s all",
-  textAlign: "center",
-  border: "4px solid #fff",
-  position: "relative",
-};
-
-const loaderOverlayStyle = {
-  position: "absolute",
-  inset: 0,
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  background: "rgba(0,0,0,0.5)",
-  zIndex: 1,
-};
-
-const productImageStyle = {
-  width: "100%",
-  height: "200px",
-  objectFit: "cover",
-  transition: "0.3s",
-};
-
-const productTitleStyle = {
-  fontSize: "20px",
-  marginBottom: "8px",
-  fontWeight: "600",
-};
-
-const productDescStyle = {
-  fontSize: "14px",
-  color: "#aaa",
-  marginBottom: "10px",
-};
-
-const productPriceStyle = {
-  fontSize: "16px",
-  color: "#ff4c4c",
-  fontWeight: "bold",
-};
 
 export default ShopByCar;

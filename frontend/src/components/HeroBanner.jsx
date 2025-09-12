@@ -18,6 +18,12 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [userName, setUserName] = useState(""); 
   const navigate = useNavigate();
+  const [isFirstRender, setIsFirstRender] = useState(true);
+  const [prevSidebarOpen, setPrevSidebarOpen] = useState(false);
+
+  useEffect(() => {
+      setIsFirstRender(false);
+    }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -68,6 +74,7 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
   };
 
   const toggleSidebar = () => {
+    setPrevSidebarOpen(sidebarOpen);
     setSidebarOpen(!sidebarOpen);
   };
 
@@ -86,8 +93,14 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
     gap: "20px",
     transform: sidebarOpen ? "translateX(0)" : "translateX(-100%)",
     transition: "transform 0.5s cubic-bezier(0.77, 0, 0.175, 1)",
-    animation: sidebarOpen ? "slideIn 0.5s forwards" : "slideOut 0.5s forwards",
-  };
+    animation: isFirstRender
+    ? "none"
+    : sidebarOpen
+    ? "slideInLeft 0.5s forwards"
+    : prevSidebarOpen
+    ? "slideOutRight 0.8s forwards"
+    : "none",
+};
 
   const sidebarBtnStyle = {
     padding: "12px",
@@ -103,7 +116,7 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
     letterSpacing: "2px",
     textTransform: "uppercase",
     opacity: 0,
-    animation: sidebarOpen ? "fadeInRight 0.6s forwards" : "none",
+    animation: sidebarOpen ? "fadeInRight 0.6s forwards" : "fadeInRight 0.6s forwards",
     animationDelay: "0.2s",
   };
 
@@ -332,7 +345,6 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
 
   return (
     <div style={bannerStyle}>
-      {sidebarOpen && (
         <div style={sidebarStyle}>
           <button
             style={{
@@ -360,7 +372,6 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
             {sidebarButtons}
           </div>
         </div>
-      )}
 
       <div style={headerStyle}>
         <button onClick={toggleSidebar} style={{ background: "none", border: "none", color: "#fff", fontSize: "30px", cursor: "pointer", transition: "transform 0.3s ease" }}>
@@ -429,6 +440,16 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
             text-shadow: 0 0 8px rgba(0,234,255,0.8);
             transform: scale(1.05);
           }
+                @keyframes slideInLeft {
+        from { transform: translateX(-100%); }
+        to { transform: translateX(0); }
+      }
+
+      @keyframes slideOutRight {
+        from { transform: translateX(0); }
+        to { transform: translateX(-100%); }
+      }
+  
         `}</style>
     </div>
   );

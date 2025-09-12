@@ -12,7 +12,6 @@ const API_BASE = process.env.REACT_APP_API_BASE;
 function ShopByBike() {
   const [products, setProducts] = useState([]);
   const [filtered, setFiltered] = useState([]);
-  const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(100000);
   const [loadingImages, setLoadingImages] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
@@ -31,28 +30,26 @@ function ShopByBike() {
   };
 
   useEffect(() => {
-  const fetchBikes = async () => {
-    const allProducts = await fetchAllProducts();
-    const bikes = allProducts.filter((p) => p.category.toLowerCase() === "bike");
-    setProducts(bikes);
-    setFiltered(bikes);
-  };
-  fetchBikes();
-}, []);
+    const fetchBikes = async () => {
+      const allProducts = await fetchAllProducts();
+      const bikes = allProducts.filter((p) => p.category.toLowerCase() === "bike");
+      setProducts(bikes);
+      setFiltered(bikes);
+    };
+    fetchBikes();
+  }, []);
 
   useEffect(() => {
     setFiltered(
       products.filter(
         (p) =>
-          p.price >= minPrice &&
           p.price <= maxPrice &&
           p.name.toLowerCase().includes(searchTerm.toLowerCase())
       )
     );
-  }, [products, minPrice, maxPrice, searchTerm]);
+  }, [products, maxPrice, searchTerm]);
 
   const resetFilter = () => {
-    setMinPrice(0);
     setMaxPrice(100000);
     setSearchTerm("");
     setFiltered(products);
@@ -60,6 +57,7 @@ function ShopByBike() {
 
   const truncateText = (text, max = 60) =>
     text.length > max ? text.slice(0, max) + "..." : text;
+
   return (
     <>
       <Header/>
@@ -110,79 +108,59 @@ function ShopByBike() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             style={{
-              padding: "12px 20px",
-              borderRadius: "30px",
+              padding: "10px 18px",
+              borderRadius: "20px",
               border: "2px solid #33cc33",
               background: "rgba(255,255,255,0.08)",
               color: "#fff",
-              fontSize: "16px",
+              fontSize: "15px",
               outline: "none",
-              width: "250px",
+              width: "220px",
               transition: "0.3s",
             }}
           />
         </div>
-
-        {/* Filter Controls */}
         <div
           style={{
-            marginBottom: "50px",
+            marginBottom: "40px",
             display: "flex",
+            flexDirection: "column",
             justifyContent: "center",
             alignItems: "center",
-            gap: "15px",
-            flexWrap: "wrap",
-            padding: "20px",
-            borderRadius: "15px",
-            boxShadow: "0 8px 20px rgba(0,0,0,0.5)",
+            gap: "8px",
+            padding: "15px",
+            borderRadius: "12px",
+            background: "rgba(255,255,255,0.05)",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
           }}
         >
+          <label style={{ color: "#fff", fontSize: "15px" }}>
+            💰 Show products under:{" "}
+            <b style={{ color: "#33cc33" }}>₹{maxPrice.toLocaleString()}</b>
+          </label>
           <input
-            type="number"
-            placeholder="Min Price"
-            value={minPrice}
-            onChange={(e) => setMinPrice(Number(e.target.value))}
-            style={{
-              padding: "14px 20px",
-              borderRadius: "12px",
-              border: "1px solid #ff4d4d",
-              background: "rgba(255,255,255,0.08)",
-              color: "#fff",
-              fontSize: "16px",
-              outline: "none",
-              width: "140px",
-              textAlign: "center",
-              transition: "0.3s",
-            }}
-          />
-          <span style={{ color: "#fff", fontSize: "18px" }}>—</span>
-          <input
-            type="number"
-            placeholder="Max Price"
+            type="range"
+            min="0"
+            max="100000"
+            step="1000"
             value={maxPrice}
             onChange={(e) => setMaxPrice(Number(e.target.value))}
             style={{
-              padding: "14px 20px",
-              borderRadius: "12px",
-              border: "1px solid #33cc33",
-              background: "rgba(255,255,255,0.08)",
-              color: "#fff",
-              fontSize: "16px",
-              outline: "none",
-              width: "140px",
-              textAlign: "center",
-              transition: "0.3s",
+              width: "220px",
+              accentColor: "#33cc33",
+              cursor: "pointer",
             }}
           />
           <button
             onClick={resetFilter}
             style={{
-              padding: "12px 28px",
-              borderRadius: "12px",
+              marginTop: "5px",
+              padding: "6px 16px",
+              borderRadius: "8px",
               border: "none",
-              background: "linear-gradient(135deg, #8888ff, #4444ff)",
+              background: "linear-gradient(135deg, #020203ff, #000002ff)",
               fontWeight: "600",
-              fontSize: "16px",
+              fontSize: "13px",
               cursor: "pointer",
               color: "#fff",
               transition: "all 0.3s",
@@ -191,8 +169,6 @@ function ShopByBike() {
             Reset
           </button>
         </div>
-
-        {/* Products Grid */}
         {filtered.length === 0 ? (
           <p style={{ color: "#aaa", textAlign: "center", fontSize: "18px" }}>
             No bike products available.
@@ -201,8 +177,8 @@ function ShopByBike() {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-              gap: "30px",
+              gridTemplateColumns: "repeat(4, 1fr)",
+              gap: "25px",
             }}
           >
             {filtered.map((product) => (
@@ -220,7 +196,7 @@ function ShopByBike() {
                   boxShadow: "0 8px 25px rgba(0,0,0,0.5)",
                   transition: "0.3s all",
                   textAlign: "center",
-                  border: "4px solid #fff",
+                  border: "3px solid #fff",
                   position: "relative",
                 }}
               >
@@ -244,16 +220,16 @@ function ShopByBike() {
                     src={product.image}
                     alt={product.name}
                     effect="blur"
-                    afterLoad={() =>
-                      setLoadingImages((prev) => ({
-                        ...prev,
-                        [product._id]: false,
-                      }))
-                    }
                     beforeLoad={() =>
                       setLoadingImages((prev) => ({
                         ...prev,
                         [product._id]: true,
+                      }))
+                    }
+                    afterLoad={() =>
+                      setLoadingImages((prev) => ({
+                        ...prev,
+                        [product._id]: false,
                       }))
                     }
                     onError={() =>
@@ -264,7 +240,7 @@ function ShopByBike() {
                     }
                     style={{
                       width: "100%",
-                      height: "200px",
+                      height: "340px",
                       objectFit: "cover",
                       transition: "0.3s",
                     }}
@@ -309,13 +285,13 @@ function ShopByBike() {
         <style>
           {`
             .product-card:hover {
-              transform: translateY(-10px) scale(1.05);
-              box-shadow: 0 18px 50px rgba(77, 204, 77, 0.6);
+              transform: translateY(-8px) scale(1.04);
+              box-shadow: 0 14px 40px rgba(77, 204, 77, 0.6);
               border: 2px solid #33cc33;
             }
 
             .product-card img:hover {
-              transform: scale(1.08);
+              transform: scale(1.06);
             }
           `}
         </style>
