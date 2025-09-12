@@ -41,9 +41,6 @@ app.get("/", (_req, res) => {
   res.json({ ok: true, message: "Benzamods API running " });
 });
 
-const PORT = process.env.PORT || 5000;
-connectDB().then(() => {
-  app.listen(PORT, () =>
-    console.log(`Backend listening at: http://localhost:${PORT}`)
-  );
-});
+connectDB();
+
+export default app;
