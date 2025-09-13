@@ -19,6 +19,10 @@ import adminRoutes from "./routes/adminRoutes.js";
 
 dotenv.config();
 const app = express();
+const allowedOrigins = [
+  "http://localhost:3000",  // for local dev
+  "https://benzamods-project-orfks9mzp-pavitra-s-projects-c7769bb9.vercel.app" // your Vercel frontend URL
+];
 
 // Ensure uploads directory exists
 const __filename = fileURLToPath(import.meta.url);
@@ -27,7 +31,19 @@ const uploadsRoot = path.join(__dirname, "uploads");
 fs.mkdirSync(uploadsRoot, { recursive: true });
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: function (origin, callback) {
+    // allow requests with no origin (like mobile apps, curl, etc.)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error("CORS not allowed from this origin: " + origin), false);
+    }
+  },
+  credentials: true
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
