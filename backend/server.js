@@ -20,9 +20,11 @@ import adminRoutes from "./routes/adminRoutes.js";
 dotenv.config();
 const app = express();
 const allowedOrigins = [
-  "http://localhost:3000",  // for local dev
-  "https://benzamods-project-orfks9mzp-pavitra-s-projects-c7769bb9.vercel.app" // your Vercel frontend URL
+  "http://localhost:3000",  // dev
+  "https://benzamods-project.vercel.app", // production
+  "https://benzamods-project-orfks9mzp-pavitra-s-projects-c7769bb9.vercel.app" // preview deployments
 ];
+
 
 // Ensure uploads directory exists
 const __filename = fileURLToPath(import.meta.url);
