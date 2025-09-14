@@ -69,15 +69,16 @@ useEffect(() => {
                 fontWeight: "900",
                 marginBottom: "35px",
                 letterSpacing: "1px",
+                alignItems:"center"
               }}
             >
               {project.title}
             </h3>
 
             <div style={{ display: "flex",   flexDirection: "column", gap:"15px", marginBottom: "35px" }}>
-              {project.category && <span style={{ fontSize: "22px", fontWeight: "700" }}>•  Category: {project.category}</span>}
-              {project.brand && <span style={{ fontSize: "22px", fontWeight: "700" }}>•  Brand: {project.brand}</span>}
-              {project.serviceType && <span style={{ fontSize: "22px", fontWeight: "700" }}>•  Service: {project.serviceType}</span>}
+              {project.category && <span style={{ fontSize: "25px", fontWeight: "700" }}>•  Category: {project.category}</span>}
+              {project.brand && <span style={{ fontSize: "25px", fontWeight: "700" }}>•  Brand: {project.brand}</span>}
+              {project.serviceType && <span style={{ fontSize: "25px", fontWeight: "700" }}>•  Service: {project.serviceType}</span>}
             </div>
 
             <div style={{ display: "flex", gap: "40px", flexWrap: "wrap", marginBottom: "25px" }}>
