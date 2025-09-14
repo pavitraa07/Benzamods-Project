@@ -74,7 +74,7 @@ useEffect(() => {
               {project.title}
             </h3>
 
-            <div style={{ display: "flex", justifyContent: "flex-start", gap:"150px", marginBottom: "35px" }}>
+            <div style={{ display: "flex",   flexDirection: "column", gap:"15px", marginBottom: "35px" }}>
               {project.category && <span style={{ fontSize: "22px", fontWeight: "700" }}>•  Category: {project.category}</span>}
               {project.brand && <span style={{ fontSize: "22px", fontWeight: "700" }}>•  Brand: {project.brand}</span>}
               {project.serviceType && <span style={{ fontSize: "22px", fontWeight: "700" }}>•  Service: {project.serviceType}</span>}
