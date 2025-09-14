@@ -6,7 +6,6 @@ import { fileURLToPath } from "url";
 import fs from "fs";
 import connectDB from "./config/db.js";
 
-// Routes
 import productRoutes from "./routes/productRoutes.js";
 import serviceRoutes from "./routes/serviceRoutes.js";
 import priorityServiceRoutes from "./routes/priorityServicesRoutes.js";
@@ -20,22 +19,18 @@ import adminRoutes from "./routes/adminRoutes.js";
 dotenv.config();
 const app = express();
 const allowedOrigins = [
-  "http://localhost:3000",  // dev
-  "https://benzamods-project.vercel.app", // production
-  "https://benzamods-project-orfks9mzp-pavitra-s-projects-c7769bb9.vercel.app" // preview deployments
+  "http://localhost:3000",  
+  "https://benzamods-project.vercel.app", 
+  "https://benzamods-project-orfks9mzp-pavitra-s-projects-c7769bb9.vercel.app"
 ];
 
-
-// Ensure uploads directory exists
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const uploadsRoot = path.join(__dirname, "uploads");
 fs.mkdirSync(uploadsRoot, { recursive: true });
 
-// Middleware
 app.use(cors({
   origin: function (origin, callback) {
-    // allow requests with no origin (like mobile apps, curl, etc.)
     if (!origin) return callback(null, true);
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
@@ -49,10 +44,8 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Static files
 app.use("/uploads", express.static(uploadsRoot));
 
-// API routes
 app.use("/api/products", productRoutes);
 app.use("/api/services", serviceRoutes);
 app.use("/api/priority-services", priorityServiceRoutes);
