@@ -288,10 +288,10 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
     fontSize: "18px",
     fontWeight: "700",
     letterSpacing: "2px",
-    backgroundColor: "#100d0dff",
-    color: "#fff",
+    backgroundColor: "#fcfcfcff",
+    color: "#0c0202ff",
     border: "none",
-    borderRadius: "8px",
+    borderRadius: "25px",
     cursor: "pointer",
     textDecoration: "none",
     boxShadow: "0 0 20px rgba(8, 8, 8, 0.6)",
@@ -299,8 +299,8 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
   };
 
   const buttonHover = {
-    backgroundColor: "#fff",
-    color: "#000",
+    backgroundColor: "#000000ff",
+    color: "#fffefeff",
     boxShadow: "0 0 25px rgba(255,255,255,0.9)",
   };
 
@@ -391,12 +391,32 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
 
       <div style={overlayStyle}></div>
 
-      <div style={textContainer}>
-        <h2 style={headingStyle}>Welcome to Benzamods</h2>
-        <p style={subHeadingStyle}>Premium modifications for Cars and Bikes</p>
-        <Link to="services/priority-services" style={buttonStyle} onMouseEnter={(e) => Object.assign(e.target.style, buttonHover)} onMouseLeave={(e) => Object.assign(e.target.style, buttonStyle)}>Priority Services</Link>
-        <Link to="/portfolio" style={{ ...buttonStyle, marginTop: "15px", display: "inline-block" }} onMouseEnter={(e) => Object.assign(e.target.style, buttonHover)} onMouseLeave={(e) => Object.assign(e.target.style, buttonStyle)}>Benzamods Portfolio</Link>
-      </div>
+     <div style={textContainer}>
+  <h2 style={headingStyle}>WELCOME TO BENZAMODS!</h2>
+  <p style={subHeadingStyle}>Premium modifications for Cars and Bikes</p>
+
+  {/* Wrap the buttons inside a flex column container */}
+  <div style={{ marginLeft:"80px", display: "flex", flexDirection: "row", gap: "20px", alignItems: "center" }}>
+    <Link 
+      to="services/priority-services" 
+      style={buttonStyle} 
+      onMouseEnter={(e) => Object.assign(e.target.style, buttonHover)} 
+      onMouseLeave={(e) => Object.assign(e.target.style, buttonStyle)}
+    >
+      Priority Services
+    </Link>
+
+    <Link 
+      to="/portfolio" 
+      style={buttonStyle} 
+      onMouseEnter={(e) => Object.assign(e.target.style, buttonHover)} 
+      onMouseLeave={(e) => Object.assign(e.target.style, buttonStyle)}
+    >
+      Benzamods Portfolio
+    </Link>
+  </div>
+</div>
+
 
       {showLogoutConfirm && (
         <div style={confirmOverlay}>
