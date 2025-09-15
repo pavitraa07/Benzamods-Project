@@ -9,7 +9,7 @@ function AdminPanel() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  //API FUNCTION 
+  // API FUNCTION: check admin table
   const loginAdmin = async (credentials) => {
     const res = await fetch(`${API_BASE}/admins/login`, {
       method: "POST",
@@ -21,15 +21,38 @@ function AdminPanel() {
     return data;
   };
 
+  // API FUNCTION: get all users
+  const getAllUsers = async () => {
+    const res = await fetch(`${API_BASE}/users`);
+    const data = await res.json();
+    if (!res.ok) throw new Error("Failed to fetch users");
+    return data.users;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
     try {
-      await loginAdmin(form); 
+      // 1️⃣ Try normal admin login first
+      await loginAdmin(form);
       navigate("/admin");
     } catch (err) {
-      setError(err.message || "Something went wrong");
+      // 2️⃣ If fails, check users collection
+      try {
+        const users = await getAllUsers();
+        const foundUser = users.find(
+          (u) => u.email === form.username && u.password === form.password && u.role === "admin"
+        );
+
+        if (foundUser) {
+          navigate("/admin");
+        } else {
+          setError("Invalid credentials or not an admin");
+        }
+      } catch (userErr) {
+        setError(userErr.message || "Something went wrong");
+      }
     }
   };
 
@@ -40,7 +63,7 @@ function AdminPanel() {
         <form onSubmit={handleSubmit} style={formStyle}>
           <input
             type="text"
-            placeholder="Username"
+            placeholder="Username or Email"
             value={form.username}
             onChange={(e) => setForm({ ...form, username: e.target.value })}
             style={inputStyle}
@@ -65,48 +88,16 @@ function AdminPanel() {
 
       <style>
         {`
-          /* Page fade-in */
-          .page {
-            animation: fadeIn 0.6s ease-in forwards;
-            opacity: 0;
-            background: #000;   
-            min-height: 100vh; 
-          }
-          @keyframes fadeIn {
-            to {
-              opacity: 1;
-            }
-          }
+          .page { animation: fadeIn 0.6s ease-in forwards; opacity: 0; background: #000; min-height: 100vh; }
+          @keyframes fadeIn { to { opacity: 1; } }
 
-          /* Card scale + fade-in */
-          .form-card {
-            animation: popIn 0.6s ease-out forwards;
-            transform: scale(0.8);
-            opacity: 0;
-          }
-          @keyframes popIn {
-            to {
-              transform: scale(1);
-              opacity: 1;
-            }
-          }
+          .form-card { animation: popIn 0.6s ease-out forwards; transform: scale(0.8); opacity: 0; }
+          @keyframes popIn { to { transform: scale(1); opacity: 1; } }
 
-          /* Input focus glow */
-          .input-animated:focus {
-            outline: none;
-            border-color: #888;
-            box-shadow: 0 0 8px #888;
-            transition: all 0.3s ease;
-          }
+          .input-animated:focus { outline: none; border-color: #888; box-shadow: 0 0 8px #888; transition: all 0.3s ease; }
 
-          /* Button hover scale + smooth transition */
-          .btn-animated {
-            transition: transform 0.2s ease, background 0.3s ease;
-          }
-          .btn-animated:hover {
-            transform: scale(1.05);
-            background: #ddd;
-          }
+          .btn-animated { transition: transform 0.2s ease, background 0.3s ease; }
+          .btn-animated:hover { transform: scale(1.05); background: #ddd; }
         `}
       </style>
     </div>
@@ -114,7 +105,7 @@ function AdminPanel() {
 }
 
 const pageStyle = {
-  background: "linear-gradient(135deg, #0d0d0d, #1a1a1a, #000)", 
+  background: "linear-gradient(135deg, #0d0d0d, #1a1a1a, #000)",
   minHeight: "100vh",
   display: "flex",
   justifyContent: "center",
