@@ -44,6 +44,19 @@ function AdminDashboard() {
 
   const navigate = useNavigate();
 
+  const sectionLabels = {
+  dashboard: "Dashboard",
+  products: "Products",
+  services: "Services",
+  priorityservices: "Priority Services",
+  contact: "Contact Messages",
+  portfolio: "Portfolio",
+  orders: "Orders",
+  manageadmins: "Admins",
+  adminusers: "Users",
+  admininquiries: "Inquiries",
+};
+
   const handleLogout = () => {
     setShowLogoutModal(false);
     navigate("/");
@@ -185,10 +198,10 @@ function AdminDashboard() {
           Logout
         </button>
 
-        <h1 style={{ borderBottom: "2px solid #444", paddingBottom: "10px" }}>
-          {activeSection.charAt(0).toUpperCase() + activeSection.slice(1)}
-        </h1>
-
+       <h1 style={{ borderBottom: "2px solid #444", paddingBottom: "10px" }}>
+        {sectionLabels[activeSection] || ""}
+       </h1>
+       
         {activeSection === "dashboard" && (
           <div style={analyticsContainer}>
             <Circle title="Products" count={productCount} index={0} />
