@@ -69,7 +69,7 @@ export default function Register() {
     email: "",
     password: "",
     confirmPassword: "",
-    role: "user",
+    role: "",
   });
 
   const [step, setStep] = useState(1);
@@ -188,17 +188,19 @@ export default function Register() {
                   onChange={handleChange}
                   required
                 />
-                <select
+               <select
                   style={selectStyle}
                   name="role"
                   value={form.role}
                   onChange={handleChange}
                   required
                 >
+                  <option value="" disabled>Select Role</option> 
                   <option value="user">User</option>
                   <option value="admin">Admin</option>
                   <option value="both">Both</option>
                 </select>
+
 
                 <motion.button
                   type="button"

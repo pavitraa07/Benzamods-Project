@@ -3,12 +3,10 @@ import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 
-// API_BASE from frontend .env
 const API_BASE = process.env.REACT_APP_API_BASE;
 
-//  login function
-const loginApi = (email, password) =>
-  axios.post(`${API_BASE}/auth/login`, { email, password });
+const loginApi = (email, password, role) =>
+  axios.post(`${API_BASE}/auth/login`, { email, password, role });
 
 export default function Login() {
   const navigate = useNavigate();
@@ -17,7 +15,7 @@ export default function Login() {
   const redirectPath =
     localStorage.getItem("redirectAfterLogin") || location.state?.from || "/";
 
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [form, setForm] = useState({ email: "", password: "", role: "" });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -27,14 +25,31 @@ export default function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+
+    if (!form.role) {
+      setMessage("Please select a role");
+      return;
+    }
+
     setLoading(true);
     try {
-      const res = await loginApi(form.email, form.password); 
+      const res = await loginApi(form.email, form.password, form.role);
       setMessage(res.data.message);
 
-      if (res.data.token) {
+      if (res.data.token && res.data.user) {
         localStorage.setItem("token", res.data.token);
-        navigate(redirectPath, { replace: true });
+
+        const userRole = res.data.user.role;
+
+        // Redirect based on role
+        if (userRole === "user") {
+          navigate("/homepage", { replace: true });
+        } else if (userRole === "admin") {
+          navigate("/admin", { replace: true });
+        } else if (userRole === "both") {
+          navigate("/admin", { replace: true }); // default to admin for "both"
+        }
+
         localStorage.removeItem("redirectAfterLogin");
       }
     } catch (err) {
@@ -75,6 +90,19 @@ export default function Login() {
             required
             style={inputStyle}
           />
+
+          <select
+            style={selectStyle}
+            name="role"
+            value={form.role}
+            onChange={handleChange}
+            required
+          >
+            <option value="" disabled>Select Role</option>
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+          </select>
+
           <motion.button
             whileHover={{ scale: 1.05, backgroundColor: "#38bdf8", color: "#000" }}
             whileTap={{ scale: 0.95 }}
@@ -140,6 +168,12 @@ const inputStyle = {
   color: "#fff",
   fontSize: "15px",
   outline: "none",
+};
+
+const selectStyle = {
+  ...inputStyle,
+  appearance: "none",
+  cursor: "pointer",
 };
 
 const buttonStyle = {
