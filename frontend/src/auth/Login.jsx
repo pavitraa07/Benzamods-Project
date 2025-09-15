@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 
 const API_BASE = process.env.REACT_APP_API_BASE;
@@ -10,8 +10,12 @@ const loginApi = (email, password) =>
 
 export default function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const [form, setForm] = useState({ email: "", password: "", role: "" });
+  const redirectPath =
+    localStorage.getItem("redirectAfterLogin") || location.state?.from || "/";
+
+  const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -21,36 +25,23 @@ export default function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
-    if (!form.role) {
-      setMessage("Please select a role");
-      return;
-    }
-
     setLoading(true);
     try {
       const res = await loginApi(form.email, form.password);
-      const user = res.data.user;
+      setMessage(res.data.message);
 
-      if (!user) {
-        setMessage("Invalid credentials");
-        return;
-      }
-
-      if (form.role === "admin") {
-        if (user.role !== "admin" && user.role !== "both") {
-          setMessage("User not registered as admin");
-          return;
-        } else {
-          localStorage.setItem("token", res.data.token);
-          navigate("/admin", { replace: true });
-        }
-      } else if (form.role === "user") {
-        // For user, any role is allowed
+      if (res.data.token) {
         localStorage.setItem("token", res.data.token);
-        navigate("/homepage", { replace: true });
-      }
 
+        // check role and redirect accordingly
+        if (res.data.user?.role === "admin") {
+          navigate("/admin", { replace: true });
+        } else {
+          navigate("/homepage", { replace: true });
+        }
+
+        localStorage.removeItem("redirectAfterLogin");
+      }
     } catch (err) {
       setMessage(err.response?.data?.message || "Invalid credentials");
     } finally {
@@ -89,21 +80,12 @@ export default function Login() {
             required
             style={inputStyle}
           />
-
-          <select
-            style={selectStyle}
-            name="role"
-            value={form.role}
-            onChange={handleChange}
-            required
-          >
-            <option value="" disabled>Select Role</option>
-            <option value="user">User</option>
-            <option value="admin">Admin</option>
-          </select>
-
           <motion.button
-            whileHover={{ scale: 1.05, backgroundColor: "#38bdf8", color: "#000" }}
+            whileHover={{
+              scale: 1.05,
+              backgroundColor: "#38bdf8",
+              color: "#000",
+            }}
             whileTap={{ scale: 0.95 }}
             type="submit"
             disabled={loading}
@@ -167,12 +149,6 @@ const inputStyle = {
   color: "#fff",
   fontSize: "15px",
   outline: "none",
-};
-
-const selectStyle = {
-  ...inputStyle,
-  appearance: "none",
-  cursor: "pointer",
 };
 
 const buttonStyle = {
