@@ -122,7 +122,7 @@ const pageStyle = {
 };
 
 const formCardStyle = {
-  background: "#1c1c1c",
+  background: "#000000ff",
   padding: "30px",
   borderRadius: "12px",
   maxWidth: "400px",
