@@ -70,6 +70,7 @@ export default function AdminInquiries() {
         Inquiries
       </h1>
 
+      {/* Search Bar */}
       <input
         type="text"
         placeholder="Search by name..."
@@ -94,72 +95,87 @@ export default function AdminInquiries() {
           No inquiries found.
         </p>
       ) : (
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
-            gap: "25px",
-          }}
-        >
-          {filteredInquiries.map((inq, index) => (
-            <div
-              key={inq._id}
-              style={{
-                background: "linear-gradient(145deg, #1c1c1c, #292929)",
-                borderRadius: "16px",
-                padding: "20px",
-                color: "#fff",
-                boxShadow: "0 8px 20px rgba(0,0,0,0.6)",
-                animation: `fadeInUp 0.6s ease forwards`,
-                animationDelay: `${index * 0.1}s`,
-                position: "relative",
-              }}
-            >
-              <h2 style={{ fontSize: "20px", marginBottom: "10px" }}>{inq.name}</h2>
-              <p style={{ fontSize: "14px", color: "#ccc", marginBottom: "5px" }}>
-                Address: {inq.address}
-              </p>
-              <p style={{ fontSize: "14px", color: "#ccc", marginBottom: "5px" }}>
-                Vehicle: {inq.vehicleName} ({inq.vehicleModel})
-              </p>
-              <p style={{ fontSize: "14px", color: "#ccc", marginBottom: "5px" }}>
-                Contact: {inq.contact}
-              </p>
-              <p style={{ fontSize: "14px", color: "#ccc", marginBottom: "5px" }}>
-                Service: {inq.service?.title || inq.serviceTitle}
-              </p>
-              <p style={{ fontSize: "14px", color: "#ccc", marginBottom: "5px" }}>
-                Category: {inq.category}
-              </p>
-              <p style={{ fontSize: "15px", color: "#eee", lineHeight: 1.5 }}>
-                Details: {inq.details}
-              </p>
-
-              <button
-                onClick={() => confirmDelete(inq._id)}
-                style={{
-                  position: "absolute",
-                  top: "15px",
-                  right: "15px",
-                  padding: "6px 12px",
-                  borderRadius: "8px",
-                  border: "none",
-                  background: "linear-gradient(135deg, #f87171, #fca5a5)",
-                  color: "#000",
-                  fontWeight: "600",
-                  cursor: "pointer",
-                  transition: "transform 0.3s ease",
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
-                onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
-              >
-                Delete
-              </button>
-            </div>
-          ))}
+        <div style={{ overflowX: "auto" }}>
+          <table
+            style={{
+              width: "100%",
+              borderCollapse: "collapse",
+              background: "#1a1a1a",
+              borderRadius: "12px",
+              overflow: "hidden",
+              boxShadow: "0 8px 20px rgba(0,0,0,0.6)",
+            }}
+          >
+            <thead>
+              <tr style={{ background: "#222" }}>
+                <th style={thStyle}>Name</th>
+                <th style={thStyle}>Address</th>
+                <th style={thStyle}>Vehicle</th>
+                <th style={thStyle}>Contact</th>
+                <th style={thStyle}>Service</th>
+                <th style={thStyle}>Category</th>
+                <th style={thStyle}>Details</th>
+                <th style={thStyle}>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredInquiries.map((inq, index) => (
+                <tr
+                  key={inq._id}
+                  style={{
+                    background: index % 2 === 0 ? "#1f1f1f" : "#2a2a2a",
+                    transition: "background 0.3s ease",
+                  }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.background = "#333")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.background =
+                      index % 2 === 0 ? "#1f1f1f" : "#2a2a2a")
+                  }
+                >
+                  <td style={tdStyle}>{inq.name}</td>
+                  <td style={tdStyle}>{inq.address}</td>
+                  <td style={tdStyle}>
+                    {inq.vehicleName} ({inq.vehicleModel})
+                  </td>
+                  <td style={tdStyle}>{inq.contact}</td>
+                  <td style={tdStyle}>{inq.service?.title || inq.serviceTitle}</td>
+                  <td style={tdStyle}>{inq.category}</td>
+                  <td style={{ ...tdStyle, maxWidth: "250px" }}>
+                    {inq.details}
+                  </td>
+                  <td style={{ ...tdStyle, textAlign: "center" }}>
+                    <button
+                      onClick={() => confirmDelete(inq._id)}
+                      style={{
+                        padding: "6px 12px",
+                        borderRadius: "8px",
+                        border: "none",
+                        background: "linear-gradient(135deg, #f87171, #fca5a5)",
+                        color: "#000",
+                        fontWeight: "600",
+                        cursor: "pointer",
+                        transition: "transform 0.3s ease",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.transform = "scale(1.05)")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.transform = "scale(1)")
+                      }
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
 
+      {/* Delete Confirmation Modal */}
       {showModal && (
         <div
           style={{
@@ -223,13 +239,23 @@ export default function AdminInquiries() {
           </div>
         </div>
       )}
-
-      <style>{`
-        @keyframes fadeInUp {
-          0% { opacity: 0; transform: translateY(40px) scale(0.95); }
-          100% { opacity: 1; transform: translateY(0) scale(1); }
-        }
-      `}</style>
     </div>
   );
 }
+
+// Reusable styles
+const thStyle = {
+  padding: "14px",
+  textAlign: "left",
+  color: "#fff",
+  fontWeight: "600",
+  fontSize: "15px",
+  borderBottom: "1px solid #333",
+};
+
+const tdStyle = {
+  padding: "12px",
+  color: "#ddd",
+  fontSize: "14px",
+  borderBottom: "1px solid #333",
+};
