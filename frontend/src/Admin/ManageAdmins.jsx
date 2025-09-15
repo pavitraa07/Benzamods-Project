@@ -66,34 +66,10 @@ function ManageAdmins() {
 
   return (
     <div style={{ padding: "40px", minHeight: "100vh", background: "#0d0d0d", color: "#fff" }}>
-      {/* Header and Search */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "20px",
-          maxWidth: "800px",
-          margin: "0 auto",
-        }}
-      >
-        <h2 style={{ color: "#fff", fontSize: "24px" }}>👑 Manage Admins</h2>
-        <input
-          type="text"
-          placeholder="Search by username..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          style={{
-            padding: "10px",
-            borderRadius: "8px",
-            border: "1px solid #444",
-            background: "#2c2c2c",
-            color: "#fff",
-            fontSize: "14px",
-            maxWidth: "250px",
-          }}
-        />
-      </div>
+      {/* Heading */}
+      <h2 style={{ color: "#fff", fontSize: "32px", textAlign: "center", marginBottom: "25px" }}>
+        👑 Manage Admins
+      </h2>
 
       {/* Add Admin Form */}
       <div style={formCardStyle}>
@@ -120,6 +96,26 @@ function ManageAdmins() {
         </form>
       </div>
 
+      {/* Search Bar */}
+      <div style={{ marginTop: "25px", textAlign: "center" }}>
+        <input
+          type="text"
+          placeholder="Search by username..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          style={{
+            padding: "12px",
+            borderRadius: "8px",
+            border: "1px solid #444",
+            background: "#2c2c2c",
+            color: "#fff",
+            fontSize: "16px",
+            width: "100%",
+            maxWidth: "600px",
+          }}
+        />
+      </div>
+
       {/* Admins Table */}
       <div style={{ marginTop: "40px", overflowX: "auto" }}>
         {filteredAdmins.length === 0 ? (
@@ -135,7 +131,13 @@ function ManageAdmins() {
             </thead>
             <tbody>
               {filteredAdmins.map((a, index) => (
-                <tr key={a._id} style={{ animation: `fadeInUp 0.5s ease forwards`, animationDelay: `${index * 0.1}s` }}>
+                <tr
+                  key={a._id}
+                  style={{
+                    animation: `fadeInUp 0.5s ease forwards`,
+                    animationDelay: `${index * 0.1}s`,
+                  }}
+                >
                   <td style={tdStyle}>{a.username}</td>
                   <td style={{ ...tdStyle, color: "#aaa", fontSize: "14px" }}>{a.password}</td>
                   <td style={tdStyle}>
