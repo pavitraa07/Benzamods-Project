@@ -18,6 +18,7 @@ export default function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [isAdminLogin, setIsAdminLogin] = useState(false); // 👈 track if logging as admin
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -33,9 +34,13 @@ export default function Login() {
       if (res.data.token) {
         localStorage.setItem("token", res.data.token);
 
-        // check role and redirect accordingly
-        if (res.data.user?.role === "admin") {
-          navigate("/admin", { replace: true });
+        // redirect depending on login type
+        if (isAdminLogin) {
+          if (res.data.role === "admin") {
+            navigate("/admin", { replace: true });
+          } else {
+            setMessage("User not registered as admin");
+          }
         } else {
           navigate("/homepage", { replace: true });
         }
@@ -57,7 +62,9 @@ export default function Login() {
         transition={{ duration: 0.7, ease: "easeOut" }}
         style={cardStyle}
       >
-        <h2 style={titleStyle}>Login</h2>
+        <h2 style={titleStyle}>
+          {isAdminLogin ? "Admin Login" : "User Login"}
+        </h2>
 
         <form onSubmit={handleLogin} style={formStyle}>
           <motion.input
@@ -98,10 +105,31 @@ export default function Login() {
         {message && <p style={errorStyle}>{message}</p>}
 
         <p style={footerStyle}>
-          Don’t have an account?{" "}
-          <span onClick={() => navigate("/register")} style={linkStyle}>
-            Register here
-          </span>
+          {isAdminLogin ? (
+            <>
+              Not an admin?{" "}
+              <span
+                onClick={() => setIsAdminLogin(false)}
+                style={linkStyle}
+              >
+                Login as User
+              </span>
+            </>
+          ) : (
+            <>
+              Don’t have an account?{" "}
+              <span onClick={() => navigate("/register")} style={linkStyle}>
+                Register here
+              </span>
+              <br />
+              <span
+                onClick={() => setIsAdminLogin(true)}
+                style={{ ...linkStyle, marginTop: "10px", display: "inline-block" }}
+              >
+                Login as Admin
+              </span>
+            </>
+          )}
         </p>
       </motion.div>
     </div>
