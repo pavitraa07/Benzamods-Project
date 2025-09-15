@@ -114,7 +114,7 @@ function AdminPanel() {
 }
 
 const pageStyle = {
-  background: "#1b1919ff",
+  background: "linear-gradient(135deg, #0d0d0d, #1a1a1a, #000)", 
   minHeight: "100vh",
   display: "flex",
   justifyContent: "center",
@@ -122,7 +122,7 @@ const pageStyle = {
 };
 
 const formCardStyle = {
-  background: "#1c1b1bff",
+  background: "#151313ff",
   padding: "30px",
   borderRadius: "12px",
   maxWidth: "400px",
