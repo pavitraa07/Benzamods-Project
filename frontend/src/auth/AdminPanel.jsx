@@ -114,7 +114,7 @@ function AdminPanel() {
 }
 
 const pageStyle = {
-  background: "#000",
+  background: "#1b1919ff",
   minHeight: "100vh",
   display: "flex",
   justifyContent: "center",
