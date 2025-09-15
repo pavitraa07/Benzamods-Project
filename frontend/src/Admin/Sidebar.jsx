@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 
-function Sidebar({ onSelect, active }) {
+function Sidebar({ onSelect }) {
+  const [active, setActive] = useState(null);
+
   const menuItems = [
     { key: "dashboard", label: "Dashboard" },
     { key: "products", label: "Products" },
@@ -36,11 +38,14 @@ function Sidebar({ onSelect, active }) {
       {menuItems.map((item) => (
         <button
           key={item.key}
-          onClick={() => onSelect(item.key)}
+          onClick={() => {
+            setActive(item.key);
+            onSelect(item.key);
+          }}
           style={{
             ...sidebarBtn,
-            background:
-              active === item.key ? "#333" : "transparent",
+            background: active === item.key ? "#333" : "transparent",
+            fontWeight: active === item.key ? "bold" : "normal",
             borderRadius: "8px",
             padding: "8px 12px",
             transition: "all 0.3s ease",
