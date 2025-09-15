@@ -1,7 +1,5 @@
 import express from "express";
 import {
-  sendOtp,
-  verifyOtp,
   registerUser,
   loginUser,
   getAllUsers,
@@ -15,11 +13,11 @@ import { protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/send-otp", sendOtp);
-router.post("/verify-otp", verifyOtp);
+// Registration and Login
 router.post("/register", registerUser);
 router.post("/login", loginUser);
 
+// Transporter check
 router.get("/check-transporter", async (req, res) => {
   try {
     const transporter = require("nodemailer").createTransport({
@@ -38,6 +36,7 @@ router.get("/check-transporter", async (req, res) => {
   }
 });
 
+// User management
 router.get("/users/count", getUserCount);
 router.get("/users", getAllUsers);
 router.get("/users/:id", getUserById);

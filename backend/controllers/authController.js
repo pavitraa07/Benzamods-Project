@@ -1,69 +1,13 @@
 import User from "../models/User.js";
-import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 dotenv.config();
 
-const otpStore = {};
-
-export const sendOtp = async (req, res) => {
-  try {
-    const { email } = req.body;
-    if (!email) {
-      return res.status(400).json({ message: "Email is required" });
-    }
-
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    otpStore[email] = otp;
-
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
-
-    const mailOptions = {
-      from: `"BenzaMods" <${process.env.EMAIL_USER}>`,
-      to: email,
-      subject: "Your OTP for BenzaMods Registration",
-      text: `Your OTP is: ${otp}`,
-    };
-
-    await transporter.sendMail(mailOptions);
-
-    return res.status(200).json({ success: true, message: "OTP sent successfully" });
-  } catch (error) {
-    console.error(" Error in sendOtp:", error);
-    return res.status(500).json({ message: "Error sending OTP", error: error.message });
-  }
-};
-
-export const verifyOtp = async (req, res) => {
-  try {
-    const { email, otp } = req.body;
-
-    if (otpStore[email] && otpStore[email] === otp) {
-      return res.status(200).json({ success: true, message: "OTP verified successfully" });
-    } else {
-      return res.status(400).json({ success: false, message: "Invalid or expired OTP" });
-    }
-  } catch (error) {
-    console.error(" Error in verifyOtp:", error);
-    return res.status(500).json({ message: "Error verifying OTP" });
-  }
-};
-
 export const registerUser = async (req, res) => {
   try {
-    const { name, email, contact, address, password } = req.body;
-
-    if (!otpStore[email]) {
-      return res.status(400).json({ message: "Email not verified with OTP" });
-    }
+    const { name, email, contact, address, password, role } = req.body;
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -78,12 +22,11 @@ export const registerUser = async (req, res) => {
       contact,
       address,
       password: hashedPassword,
-      isVerified: true,
+      isVerified: true, // since no OTP verification
+      role: role || "user",
     });
 
     await newUser.save();
-
-    delete otpStore[email];
 
     return res.status(201).json({ success: true, message: "User registered successfully" });
   } catch (error) {
@@ -107,7 +50,7 @@ export const loginUser = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user._id, isAdmin: user.isAdmin, name: user.name, email: user.email },
+      { id: user._id, role: user.role, name: user.name, email: user.email },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
@@ -144,8 +87,8 @@ export const getUserById = async (req, res) => {
 
 export const updateUser = async (req, res) => {
   try {
-    const { name, contact, address, password } = req.body;
-    const updateFields = { name, contact, address };
+    const { name, contact, address, password, role } = req.body;
+    const updateFields = { name, contact, address, role };
 
     if (password) {
       updateFields.password = await bcrypt.hash(password, 10);

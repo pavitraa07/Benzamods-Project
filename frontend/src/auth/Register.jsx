@@ -4,9 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
 const API_BASE = process.env.REACT_APP_API_BASE;
-
-const sendOtpApi = (email) => axios.post(`${API_BASE}/auth/send-otp`, { email });
-const verifyOtpApi = (email, otp) => axios.post(`${API_BASE}/auth/verify-otp`, { email, otp });
 const registerUserApi = (data) => axios.post(`${API_BASE}/auth/register`, data);
 
 const containerStyle = {
@@ -39,6 +36,12 @@ const inputStyle = {
   outline: "none",
 };
 
+const selectStyle = {
+  ...inputStyle,
+  appearance: "none",
+  cursor: "pointer",
+};
+
 const buttonStyle = {
   width: "100%",
   padding: "12px",
@@ -64,9 +67,9 @@ export default function Register() {
     contact: "",
     address: "",
     email: "",
-    otp: "",
     password: "",
     confirmPassword: "",
+    role: "user",
   });
 
   const [step, setStep] = useState(1);
@@ -78,34 +81,8 @@ export default function Register() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSendOtp = async () => {
-    setLoading(true);
-    try {
-      const res = await sendOtpApi(form.email);
-      setMessage(res.data.message);
-      setMessageType("success");
-      setStep(2);
-    } catch (err) {
-      setMessage(err.response?.data?.message || "Error sending OTP");
-      setMessageType("error");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleVerifyOtp = async () => {
-    setLoading(true);
-    try {
-      const res = await verifyOtpApi(form.email, form.otp);
-      setMessage(res.data.message);
-      setMessageType("success");
-      setStep(3);
-    } catch (err) {
-      setMessage(err.response?.data?.message || "Invalid OTP");
-      setMessageType("error");
-    } finally {
-      setLoading(false);
-    }
+  const handleNextStep = () => {
+    setStep(2); // move directly to password step
   };
 
   const handleRegister = async (e) => {
@@ -123,6 +100,7 @@ export default function Register() {
         address: form.address,
         email: form.email,
         password: form.password,
+        role: form.role,
       });
       setMessage(res.data.message);
       setMessageType("success");
@@ -210,9 +188,21 @@ export default function Register() {
                   onChange={handleChange}
                   required
                 />
+                <select
+                  style={selectStyle}
+                  name="role"
+                  value={form.role}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="user">User</option>
+                  <option value="admin">Admin</option>
+                  <option value="both">Both</option>
+                </select>
+
                 <motion.button
                   type="button"
-                  onClick={handleSendOtp}
+                  onClick={handleNextStep}
                   disabled={loading}
                   style={{
                     ...buttonStyle,
@@ -222,7 +212,7 @@ export default function Register() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  {loading ? "Sending..." : "Send OTP"}
+                  Next
                 </motion.button>
               </motion.div>
             )}
@@ -230,41 +220,6 @@ export default function Register() {
             {step === 2 && (
               <motion.div
                 key="step2"
-                variants={fadeUp}
-                initial="hidden"
-                animate="visible"
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                <input
-                  style={inputStyle}
-                  type="text"
-                  name="otp"
-                  placeholder="Enter OTP"
-                  value={form.otp}
-                  onChange={handleChange}
-                  required
-                />
-                <motion.button
-                  type="button"
-                  onClick={handleVerifyOtp}
-                  disabled={loading}
-                  style={{
-                    ...buttonStyle,
-                    background: "#16a34a",
-                    color: "#fff",
-                  }}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  {loading ? "Verifying..." : "Verify OTP"}
-                </motion.button>
-              </motion.div>
-            )}
-
-            {step === 3 && (
-              <motion.div
-                key="step3"
                 variants={fadeUp}
                 initial="hidden"
                 animate="visible"
