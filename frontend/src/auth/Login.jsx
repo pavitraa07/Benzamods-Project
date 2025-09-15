@@ -15,7 +15,7 @@ export default function Login() {
   const redirectPath =
     localStorage.getItem("redirectAfterLogin") || location.state?.from || "/";
 
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [form, setForm] = useState({ email: "", password: "", role: "" });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -25,18 +25,33 @@ export default function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+
+    if (!form.role) {
+      setMessage("Please select a role");
+      return;
+    }
+
     setLoading(true);
     try {
       const res = await loginApi(form.email, form.password);
       setMessage(res.data.message);
 
       if (res.data.token) {
+        // store token as before
         localStorage.setItem("token", res.data.token);
 
-        // check role and redirect accordingly
-        if (res.data.user?.role === "admin") {
-          navigate("/admin", { replace: true });
-        } else {
+        // backend might return role either as res.data.role or res.data.user.role
+        const backendRole = res.data.role || res.data.user?.role;
+
+        if (form.role === "admin") {
+          // allow admin if backend role is "admin" or "both"
+          if (backendRole === "admin" || backendRole === "both") {
+            navigate("/admin", { replace: true });
+          } else {
+            setMessage("User not registered as admin");
+          }
+        } else if (form.role === "user") {
+          // for user selection, go to homepage
           navigate("/homepage", { replace: true });
         }
 
@@ -80,12 +95,22 @@ export default function Login() {
             required
             style={inputStyle}
           />
+
+          {/* Select Role (User / Admin) */}
+          <select
+            name="role"
+            value={form.role}
+            onChange={handleChange}
+            required
+            style={inputStyle}
+          >
+            <option value="">Select role</option>
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+          </select>
+
           <motion.button
-            whileHover={{
-              scale: 1.05,
-              backgroundColor: "#38bdf8",
-              color: "#000",
-            }}
+            whileHover={{ scale: 1.05, backgroundColor: "#38bdf8", color: "#000" }}
             whileTap={{ scale: 0.95 }}
             type="submit"
             disabled={loading}
