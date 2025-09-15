@@ -66,6 +66,7 @@ export default function AdminUsers() {
     <div style={{ padding: "40px", minHeight: "100vh", background: "#0d0d0d", color: "#fff" }}>
       <h1 style={{ textAlign: "center", fontSize: "36px", marginBottom: "20px" }}>👥 Manage Users</h1>
 
+      {/* Search Bar */}
       <input
         type="text"
         placeholder="Search by name..."
@@ -85,93 +86,134 @@ export default function AdminUsers() {
         }}
       />
 
+      {/* Users Table */}
       {loading ? (
         <p style={{ textAlign: "center", color: "#aaa" }}>Loading users...</p>
       ) : filteredUsers.length === 0 ? (
         <p style={{ textAlign: "center", color: "#aaa" }}>No users found.</p>
       ) : (
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
-            gap: "25px",
-          }}
-        >
-          {filteredUsers.map((user, index) => (
-            <div
-              key={user._id}
-              style={{
-                background: "linear-gradient(145deg, #1c1c1c, #292929)",
-                borderRadius: "16px",
-                padding: "20px",
-                color: "#fff",
-                boxShadow: "0 8px 20px rgba(0,0,0,0.6)",
-                animation: `fadeInUp 0.6s ease forwards`,
-                animationDelay: `${index * 0.1}s`,
-                position: "relative",
-              }}
-            >
-              <h2 style={{ fontSize: "20px", marginBottom: "10px" }}>{user.name}</h2>
-              <p style={{ fontSize: "14px", color: "#ccc", marginBottom: "5px" }}>📧 {user.email}</p>
-              <p style={{ fontSize: "14px", color: "#ccc", marginBottom: "10px" }}>📞 {user.contact}</p>
-              <p style={{ fontSize: "15px", color: "#eee", lineHeight: 1.5 }}>{user.address}</p>
-
-              <button
-                onClick={() => handleDeleteClick(user)}
-                style={{
-                  position: "absolute",
-                  top: "15px",
-                  right: "15px",
-                  padding: "6px 12px",
-                  borderRadius: "8px",
-                  border: "none",
-                  background: "linear-gradient(135deg, #f9f7f7ff, #ffffffff)",
-                  color: "#000",
-                  fontWeight: "600",
-                  cursor: "pointer",
-                  transition: "transform 0.3s ease",
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
-                onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
-              >
-                Delete
-              </button>
-            </div>
-          ))}
+        <div style={{ overflowX: "auto" }}>
+          <table
+            style={{
+              width: "100%",
+              borderCollapse: "collapse",
+              background: "#1a1a1a",
+              borderRadius: "12px",
+              overflow: "hidden",
+              boxShadow: "0 8px 20px rgba(0,0,0,0.6)",
+            }}
+          >
+            <thead>
+              <tr style={{ background: "#222" }}>
+                <th style={thStyle}>Name</th>
+                <th style={thStyle}>Email</th>
+                <th style={thStyle}>Contact</th>
+                <th style={thStyle}>Address</th>
+                <th style={thStyle}>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredUsers.map((user, index) => (
+                <tr
+                  key={user._id}
+                  style={{
+                    background: index % 2 === 0 ? "#1f1f1f" : "#2a2a2a",
+                    transition: "background 0.3s ease",
+                  }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.background = "#333")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.background =
+                      index % 2 === 0 ? "#1f1f1f" : "#2a2a2a")
+                  }
+                >
+                  <td style={tdStyle}>{user.name}</td>
+                  <td style={tdStyle}>{user.email}</td>
+                  <td style={tdStyle}>{user.contact}</td>
+                  <td style={{ ...tdStyle, maxWidth: "250px" }}>{user.address}</td>
+                  <td style={{ ...tdStyle, textAlign: "center" }}>
+                    <button
+                      onClick={() => handleDeleteClick(user)}
+                      style={{
+                        padding: "6px 12px",
+                        borderRadius: "8px",
+                        border: "none",
+                        background: "linear-gradient(135deg, #f9f7f7ff, #ffffffff)",
+                        color: "#000",
+                        fontWeight: "600",
+                        cursor: "pointer",
+                        transition: "transform 0.3s ease",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.transform = "scale(1.05)")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.transform = "scale(1)")
+                      }
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
 
+      {/* Confirm Delete Modal */}
       {showConfirm && (
-        <div style={{
-          position: "fixed",
-          top: 0, left: 0, width: "100%", height: "100%",
-          background: "rgba(0,0,0,0.7)",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          zIndex: 1000
-        }}>
-          <div style={{
-            background: "#fff",
-            color: "#000",
-            padding: "30px",
-            borderRadius: "12px",
-            minWidth: "320px",
-            textAlign: "center"
-          }}>
+        <div
+          style={{
+            position: "fixed",
+            top: 0, left: 0, width: "100%", height: "100%",
+            background: "rgba(0,0,0,0.7)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 1000,
+          }}
+        >
+          <div
+            style={{
+              background: "#fff",
+              color: "#000",
+              padding: "30px",
+              borderRadius: "12px",
+              minWidth: "320px",
+              textAlign: "center",
+            }}
+          >
             <p style={{ fontSize: "18px", marginBottom: "20px" }}>
               Are you sure you want to delete <strong>{userToDelete?.name}</strong>?
             </p>
             <div style={{ display: "flex", justifyContent: "center", gap: "15px" }}>
               <button
                 onClick={handleConfirmDelete}
-                style={{ padding: "10px 20px", borderRadius: "8px", border: "none", background: "#dc3545", color: "#fff", fontWeight: "600", cursor: "pointer" }}
+                style={{
+                  padding: "10px 20px",
+                  borderRadius: "8px",
+                  border: "none",
+                  background: "#dc3545",
+                  color: "#fff",
+                  fontWeight: "600",
+                  cursor: "pointer",
+                }}
               >
                 Yes, Delete
               </button>
               <button
                 onClick={handleCancelDelete}
-                style={{ padding: "10px 20px", borderRadius: "8px", border: "none", background: "#6c757d", color: "#fff", fontWeight: "600", cursor: "pointer" }}
+                style={{
+                  padding: "10px 20px",
+                  borderRadius: "8px",
+                  border: "none",
+                  background: "#6c757d",
+                  color: "#fff",
+                  fontWeight: "600",
+                  cursor: "pointer",
+                }}
               >
                 Cancel
               </button>
@@ -179,13 +221,23 @@ export default function AdminUsers() {
           </div>
         </div>
       )}
-
-      <style>{`
-        @keyframes fadeInUp {
-          0% { opacity: 0; transform: translateY(40px) scale(0.95); }
-          100% { opacity: 1; transform: translateY(0) scale(1); }
-        }
-      `}</style>
     </div>
   );
 }
+
+// Table Styles
+const thStyle = {
+  padding: "14px",
+  textAlign: "left",
+  color: "#fff",
+  fontWeight: "600",
+  fontSize: "15px",
+  borderBottom: "1px solid #333",
+};
+
+const tdStyle = {
+  padding: "12px",
+  color: "#ddd",
+  fontSize: "14px",
+  borderBottom: "1px solid #333",
+};

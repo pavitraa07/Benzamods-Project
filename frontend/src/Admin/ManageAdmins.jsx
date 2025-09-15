@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const API_BASE =  process.env.REACT_APP_API_BASE;
+const API_BASE = process.env.REACT_APP_API_BASE;
 
 async function getAdmins() {
   const res = await fetch(`${API_BASE}/admins`);
@@ -65,18 +65,19 @@ function ManageAdmins() {
   );
 
   return (
-    <>
+    <div style={{ padding: "40px", minHeight: "100vh", background: "#0d0d0d", color: "#fff" }}>
+      {/* Header and Search */}
       <div
         style={{
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
           marginBottom: "20px",
-          maxWidth: "600px",
+          maxWidth: "800px",
           margin: "0 auto",
         }}
       >
-        <h2 style={{ color: "#fff" }}>Add Admin</h2>
+        <h2 style={{ color: "#fff", fontSize: "24px" }}>👑 Manage Admins</h2>
         <input
           type="text"
           placeholder="Search by username..."
@@ -94,6 +95,7 @@ function ManageAdmins() {
         />
       </div>
 
+      {/* Add Admin Form */}
       <div style={formCardStyle}>
         <form onSubmit={handleAdminSubmit} style={formStyle}>
           <input
@@ -113,43 +115,56 @@ function ManageAdmins() {
             required
           />
           <button type="submit" style={buttonStyle}>
-            Add Admin
+            ➕ Add Admin
           </button>
         </form>
       </div>
 
-      <div
-        style={{
-          marginTop: "30px",
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
-          gap: "20px",
-        }}
-      >
-        {filteredAdmins.map((a) => (
-          <div
-            key={a._id}
-            style={{
-              background: "#222",
-              borderRadius: "10px",
-              padding: "15px",
-              textAlign: "center",
-            }}
-          >
-            <h3>{a.username}</h3>
-            <p style={{ fontSize: "12px", color: "#aaa", wordBreak: "break-all" }}>
-              {a.password}
-            </p>
-            <button
-              onClick={() => handleDeleteClick(a)}
-              style={{ ...buttonStyle, background: "#fff", color: "#000", marginTop: "10px" }}
-            >
-              Delete
-            </button>
-          </div>
-        ))}
+      {/* Admins Table */}
+      <div style={{ marginTop: "40px", overflowX: "auto" }}>
+        {filteredAdmins.length === 0 ? (
+          <p style={{ textAlign: "center", color: "#aaa" }}>No admins found.</p>
+        ) : (
+          <table style={tableStyle}>
+            <thead>
+              <tr>
+                <th style={thStyle}>Username</th>
+                <th style={thStyle}>Password</th>
+                <th style={thStyle}>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredAdmins.map((a, index) => (
+                <tr key={a._id} style={{ animation: `fadeInUp 0.5s ease forwards`, animationDelay: `${index * 0.1}s` }}>
+                  <td style={tdStyle}>{a.username}</td>
+                  <td style={{ ...tdStyle, color: "#aaa", fontSize: "14px" }}>{a.password}</td>
+                  <td style={tdStyle}>
+                    <button
+                      onClick={() => handleDeleteClick(a)}
+                      style={{
+                        padding: "6px 12px",
+                        borderRadius: "6px",
+                        border: "none",
+                        background: "#fff",
+                        color: "#000",
+                        fontWeight: "600",
+                        cursor: "pointer",
+                        transition: "transform 0.3s ease",
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+                      onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
 
+      {/* Delete Confirmation */}
       {showConfirm && (
         <div
           style={{
@@ -211,7 +226,15 @@ function ManageAdmins() {
           </div>
         </div>
       )}
-    </>
+
+      {/* Animations */}
+      <style>{`
+        @keyframes fadeInUp {
+          0% { opacity: 0; transform: translateY(30px) scale(0.95); }
+          100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+      `}</style>
+    </div>
   );
 }
 
@@ -242,6 +265,26 @@ const buttonStyle = {
   color: "#000",
   cursor: "pointer",
   fontWeight: "bold",
+};
+const tableStyle = {
+  width: "100%",
+  borderCollapse: "collapse",
+  background: "#1a1a1a",
+  borderRadius: "12px",
+  overflow: "hidden",
+  boxShadow: "0 6px 16px rgba(0,0,0,0.5)",
+};
+const thStyle = {
+  padding: "14px",
+  background: "#222",
+  color: "#fff",
+  textAlign: "left",
+  fontSize: "16px",
+};
+const tdStyle = {
+  padding: "12px 14px",
+  borderBottom: "1px solid #333",
+  fontSize: "15px",
 };
 
 export default ManageAdmins;
