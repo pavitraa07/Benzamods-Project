@@ -1,19 +1,15 @@
 import { useState } from "react";
 import axios from "axios";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
 const API_BASE = process.env.REACT_APP_API_BASE;
 
-const loginApi = (email, password, role) =>
-  axios.post(`${API_BASE}/auth/login`, { email, password, role });
+const loginApi = (email, password) =>
+  axios.post(`${API_BASE}/auth/login`, { email, password });
 
 export default function Login() {
   const navigate = useNavigate();
-  const location = useLocation();
-
-  const redirectPath =
-    localStorage.getItem("redirectAfterLogin") || location.state?.from || "/";
 
   const [form, setForm] = useState({ email: "", password: "", role: "" });
   const [loading, setLoading] = useState(false);
@@ -33,25 +29,28 @@ export default function Login() {
 
     setLoading(true);
     try {
-      const res = await loginApi(form.email, form.password, form.role);
-      setMessage(res.data.message);
+      const res = await loginApi(form.email, form.password);
+      const user = res.data.user;
 
-      if (res.data.token && res.data.user) {
-        localStorage.setItem("token", res.data.token);
-
-        const userRole = res.data.user.role;
-
-        // Redirect based on role
-        if (userRole === "user") {
-          navigate("/homepage", { replace: true });
-        } else if (userRole === "admin") {
-          navigate("/admin", { replace: true });
-        } else if (userRole === "both") {
-          navigate("/admin", { replace: true }); // default to admin for "both"
-        }
-
-        localStorage.removeItem("redirectAfterLogin");
+      if (!user) {
+        setMessage("Invalid credentials");
+        return;
       }
+
+      if (form.role === "admin") {
+        if (user.role !== "admin" && user.role !== "both") {
+          setMessage("User not registered as admin");
+          return;
+        } else {
+          localStorage.setItem("token", res.data.token);
+          navigate("/admin", { replace: true });
+        }
+      } else if (form.role === "user") {
+        // For user, any role is allowed
+        localStorage.setItem("token", res.data.token);
+        navigate("/homepage", { replace: true });
+      }
+
     } catch (err) {
       setMessage(err.response?.data?.message || "Invalid credentials");
     } finally {
