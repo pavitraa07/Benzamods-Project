@@ -44,7 +44,7 @@ function Sidebar({ onSelect }) {
         }}
           whileHover={{
             scale: 1.05,             
-            backgroundColor: "#222", 
+            backgroundColor: "#393838ff", 
           }}
           whileTap={{ scale: 0.95 }} 
           transition={{ type: "spring", stiffness: 300, damping: 15 }}

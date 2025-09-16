@@ -267,7 +267,8 @@ const buttonStyle = {
   fontWeight: "bold",
 };
 const tableStyle = {
-  width: "100%",
+  width: "60%",
+  margin: "0 auto", 
   borderCollapse: "collapse",
   background: "#1a1a1a",
   borderRadius: "12px",
