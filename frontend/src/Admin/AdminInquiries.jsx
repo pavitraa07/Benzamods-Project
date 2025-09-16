@@ -213,8 +213,8 @@ export default function AdminInquiries() {
                   padding: "10px 20px",
                   borderRadius: "8px",
                   border: "none",
-                  background: "#ffffffff",
-                  color: "#000000ff",
+                  background: "#ef4444",
+                  color: "#fff",
                   fontWeight: "bold",
                   cursor: "pointer",
                 }}
