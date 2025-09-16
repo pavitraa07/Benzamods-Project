@@ -7,7 +7,7 @@ dotenv.config();
 
 export const registerUser = async (req, res) => {
   try {
-    const { name, email, contact, address, password, role } = req.body;
+    const { name, email, contact, address, password} = req.body;
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -22,8 +22,7 @@ export const registerUser = async (req, res) => {
       contact,
       address,
       password: hashedPassword,
-      isVerified: true, // since no OTP verification
-      role: role || "user",
+      isVerified: true,
     });
 
     await newUser.save();
@@ -50,12 +49,12 @@ export const loginUser = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user._id, role: user.role, name: user.name, email: user.email },
+      { id: user._id, name: user.name, email: user.email },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
 
-    return res.status(200).json({ success: true, message: "Login successful", token, role: user.role, });
+    return res.status(200).json({ success: true, message: "Login successful", token });
   } catch (error) {
     console.error("🔥 Error in loginUser:", error);
     return res.status(500).json({ message: "Error logging in" });
@@ -87,8 +86,8 @@ export const getUserById = async (req, res) => {
 
 export const updateUser = async (req, res) => {
   try {
-    const { name, contact, address, password, role } = req.body;
-    const updateFields = { name, contact, address, role };
+    const { name, contact, address, password} = req.body;
+    const updateFields = { name, contact, address };
 
     if (password) {
       updateFields.password = await bcrypt.hash(password, 10);

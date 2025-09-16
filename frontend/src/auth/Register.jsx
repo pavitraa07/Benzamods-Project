@@ -69,7 +69,6 @@ export default function Register() {
     email: "",
     password: "",
     confirmPassword: "",
-    role: "",
   });
 
   const [step, setStep] = useState(1);
@@ -82,7 +81,7 @@ export default function Register() {
   };
 
   const handleNextStep = () => {
-    setStep(2); // move directly to password step
+    setStep(2); 
   };
 
   const handleRegister = async (e) => {
@@ -100,7 +99,6 @@ export default function Register() {
         address: form.address,
         email: form.email,
         password: form.password,
-        role: form.role,
       });
       setMessage(res.data.message);
       setMessageType("success");
@@ -188,20 +186,6 @@ export default function Register() {
                   onChange={handleChange}
                   required
                 />
-               <select
-                  style={selectStyle}
-                  name="role"
-                  value={form.role}
-                  onChange={handleChange}
-                  required
-                >
-                  <option value="" disabled>Select Role</option> 
-                  <option value="user">User</option>
-                  <option value="admin">Admin</option>
-                  <option value="both">Both</option>
-                </select>
-
-
                 <motion.button
                   type="button"
                   onClick={handleNextStep}

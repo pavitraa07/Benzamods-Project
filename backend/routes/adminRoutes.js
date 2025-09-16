@@ -66,39 +66,24 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ message: "All fields required" });
     }
 
-    // 1️⃣ Try Admin collection first
     const admin = await Admin.findOne({ username });
-    if (admin) {
-      const isMatch = await bcrypt.compare(password, admin.password);
-      if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
-
-      return res.json({
-        message: "Login successful",
-        adminId: admin._id,
-        username: admin.username,
-      });
+    if (!admin) {
+      return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    // 2️⃣ If not found in Admin, try User collection with role === "admin"
-    const user = await User.findOne({ email: username, role: "admin" });
-    if (user) {
-      const isMatchUser = await bcrypt.compare(password, user.password);
-      if (!isMatchUser) return res.status(400).json({ message: "Invalid credentials" });
-
-      return res.json({
-        message: "Login successful",
-        userId: user._id,
-        email: user.email,
-      });
+    const isMatch = await bcrypt.compare(password, admin.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    // 3️⃣ If neither found
-    return res.status(400).json({ message: "Invalid credentials" });
-
+    res.json({
+      message: "Login successful",
+      adminId: admin._id,
+      username: admin.username,
+    });
   } catch (err) {
     res.status(500).json({ message: "Server error" });
   }
 });
-
 
 export default router;
