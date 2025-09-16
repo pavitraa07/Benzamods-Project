@@ -87,9 +87,8 @@ function ManageOrders() {
   }
 
   return (
-    <div style={{ background: "#0d0d0d", minHeight: "100vh", padding: "40px" }}>
+    <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh", background: "#0d0d0d" }}>
       <Header /> 
-
       <h1
         style={{
           textAlign: "center",
@@ -252,7 +251,7 @@ function ManageOrders() {
           </motion.div>
         )}
       </AnimatePresence>
-      <Footer />
+      <Footer/>
     </div>
   );
 }

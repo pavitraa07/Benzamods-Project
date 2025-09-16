@@ -68,9 +68,7 @@ function ManageProfile() {
           <p><strong>Email:</strong> {user.email}</p>
           <p><strong>Contact:</strong> {user.contact}</p>
           <p><strong>Address:</strong> {user.address}</p>
-          <p><strong>Verified:</strong> {user.isVerified ? "✅ Yes" : "❌ No"}</p>
           <p><strong>Created At:</strong> {new Date(user.createdAt).toLocaleString()}</p>
-          <p><strong>Updated At:</strong> {new Date(user.updatedAt).toLocaleString()}</p>
         </div>
       </main>
       <Footer />
