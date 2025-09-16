@@ -276,12 +276,11 @@ function AdminDashboard() {
               display: block;
             }
           }
-
-          /* Circle pop-in animation with stagger */
           .circle {
             animation: popIn 0.6s ease forwards;
             transform: scale(0.7);
             opacity: 0;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
           }
           @keyframes popIn {
             to {
@@ -355,13 +354,13 @@ function AdminDashboard() {
           to {
             opacity: 1;
           }
+       }
         /* Circle hover effect */
         .circle:hover {
           transform: scale(1.08);
           box-shadow: 0 0 25px #00d9ff;
           transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-       }
         `}
       </style>
     </div>
