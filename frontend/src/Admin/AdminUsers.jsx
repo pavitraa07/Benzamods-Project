@@ -109,7 +109,7 @@ export default function AdminUsers() {
                 <th style={thStyle}>Email</th>
                 <th style={thStyle}>Contact</th>
                 <th style={thStyle}>Address</th>
-                <th style={thStyle}>Action</th>
+                <th style={{ ...thStyle, textAlign: "center" }}>Action</th> 
               </tr>
             </thead>
             <tbody>

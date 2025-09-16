@@ -233,7 +233,7 @@ const formCardStyle = {
   background: "#1c1c1c",
   padding: "20px",
   borderRadius: "12px",
-  maxWidth: "600px",
+  maxWidth: "450px",
   margin: "0 auto",
 };
 const formStyle = {
@@ -248,6 +248,7 @@ const inputStyle = {
   background: "#2c2c2c",
   color: "#fff",
   width: "100%",
+  boxSizing: "border-box",
 };
 const buttonStyle = {
   padding: "10px 15px",
