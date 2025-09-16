@@ -36,12 +36,18 @@ function Sidebar({ onSelect }) {
       <h2 style={{ color: "#fff", marginBottom: "20px" }}>Admin Panel</h2>
 
       {menuItems.map((item) => (
-        <button
-          key={item.key}
-          onClick={() => {
-            setActive(item.key);
-            onSelect(item.key);
+        <motion.button
+        key={item.key}
+        onClick={() => {
+          setActive(item.key);
+          onSelect(item.key);
+        }}
+          whileHover={{
+            scale: 1.05,             
+            backgroundColor: "#222", 
           }}
+          whileTap={{ scale: 0.95 }} 
+          transition={{ type: "spring", stiffness: 300, damping: 15 }}
           style={{
             ...sidebarBtn,
             background: active === item.key ? "#333" : "transparent",
@@ -52,7 +58,7 @@ function Sidebar({ onSelect }) {
           }}
         >
           {item.label}
-        </button>
+        </motion.button>
       ))}
     </motion.div>
   );

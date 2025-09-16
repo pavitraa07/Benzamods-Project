@@ -125,7 +125,6 @@ function ManageAdmins() {
             <thead>
               <tr>
                 <th style={thStyle}>Username</th>
-                <th style={thStyle}>Password</th>
                 <th style={thStyle}>Actions</th>
               </tr>
             </thead>
@@ -139,7 +138,6 @@ function ManageAdmins() {
                   }}
                 >
                   <td style={tdStyle}>{a.username}</td>
-                  <td style={{ ...tdStyle, color: "#aaa", fontSize: "14px" }}>{a.password}</td>
                   <td style={tdStyle}>
                     <button
                       onClick={() => handleDeleteClick(a)}
