@@ -61,9 +61,14 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const handleScroll = (ref) => {
-    ref.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  const handleScroll = (id) => {
+  const element = document.getElementById(id);
+  if (element) {
+    const yOffset = -80; // optional: adjust for fixed header height
+    const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+    window.scrollTo({ top: y, behavior: "smooth" });
+  }
+};
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -306,9 +311,9 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
 
   const navButtons = (
     <>
-      <button style={navButtonStyle} onClick={() => handleScroll(shopRef)}>Shop</button>
-      <button style={navButtonStyle} onClick={() => handleScroll(servicesRef)}>Additional Services</button>
-      <button style={navButtonStyle} onClick={() => handleScroll(reviewsRef)}>Reviews</button>
+      <button style={navButtonStyle} onClick={() => handleScroll("shop")}>Shop</button>
+      <button style={navButtonStyle} onClick={() => handleScroll("services")}>Additional Services</button>
+      <button style={navButtonStyle} onClick={() => handleScroll("reviews")}>Reviews</button>
       {isLoggedIn ? (
         <button style={navButtonStyle} onClick={() => setShowLogoutConfirm(true)}>Logout</button>
       ) : (
@@ -321,9 +326,9 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
 
   const sidebarButtons = isMobile ? (
     <>
-      <button style={sidebarBtnStyle} onClick={() => handleScroll(shopRef)}>Shop</button>
-      <button style={sidebarBtnStyle} onClick={() => handleScroll(servicesRef)}>Additional Services</button>
-      <button style={sidebarBtnStyle} onClick={() => handleScroll(reviewsRef)}>Reviews</button>
+      <button style={sidebarBtnStyle} onClick={() => handleScroll("shop")}>Shop</button>
+      <button style={sidebarBtnStyle} onClick={() => handleScroll("services")}>Additional Services</button>
+      <button style={sidebarBtnStyle} onClick={() => handleScroll("reviews")}>Reviews</button>
       {isLoggedIn ? (
         <button style={sidebarBtnStyle} onClick={() => setShowLogoutConfirm(true)}>Logout</button>
       ) : (

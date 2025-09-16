@@ -252,7 +252,6 @@ function ManageOrders() {
           </motion.div>
         )}
       </AnimatePresence>
-
       <Footer />
     </div>
   );
