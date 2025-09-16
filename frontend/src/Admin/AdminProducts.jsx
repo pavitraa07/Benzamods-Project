@@ -267,6 +267,7 @@ const inputStyle = {
   background: "#2c2c2c",
   color: "#fff",
   width: "100%",
+  boxSizing: "border-box" 
 };
 const buttonStyle = {
   padding: "10px 15px",
