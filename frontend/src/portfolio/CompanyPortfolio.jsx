@@ -64,7 +64,7 @@ const CompanyPortfolio = () => {
         }}
       >
         {/* Image Carousel */}
-        <div style={{ flex: "1 1 350px", minWidth: "220px" }}>
+        <div style={{ flex: "1 1 350px", minWidth: "180px" }}>
           <div
             style={{
               position: "relative",
