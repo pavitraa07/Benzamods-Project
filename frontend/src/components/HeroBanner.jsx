@@ -396,7 +396,7 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
         Shop
       </button>
       <button style={sidebarBtnStyle} onClick={() => handleScroll("services")}>
-        Additional Services
+        Added Services
       </button>
       <button style={sidebarBtnStyle} onClick={() => handleScroll("reviews")}>
         Reviews
