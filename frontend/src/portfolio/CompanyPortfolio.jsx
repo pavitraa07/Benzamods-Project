@@ -40,7 +40,8 @@ const CompanyPortfolio = () => {
         padding: "30px 20px", 
         fontFamily: "'Rajdhani', sans-serif",
       }}
-    >      <div style={{ display: "flex", alignItems: "center", marginBottom: "15px", gap: "15px" }}>
+    >
+      <div style={{ display: "flex", alignItems: "center", marginBottom: "15px", gap: "15px" }}>
         <img
           src={bmlogo}
           alt="Logo"
@@ -54,7 +55,6 @@ const CompanyPortfolio = () => {
         <h1 style={{ fontSize: "48px", fontWeight: "800", letterSpacing: "2px" }}>{header}</h1>
       </div>
 
-
       <div
         style={{
           display: "flex",
@@ -63,7 +63,8 @@ const CompanyPortfolio = () => {
           flexWrap: "wrap",
         }}
       >
-        <div style={{ flex: "1 1 400px", minWidth: "300px" }}>
+        {/* Image Carousel */}
+        <div style={{ flex: "1 1 350px", minWidth: "280px" }}>
           <div
             style={{
               position: "relative",
@@ -84,7 +85,7 @@ const CompanyPortfolio = () => {
                   style={{
                     minWidth: `${100 / images.length}%`,
                     height: "100%",
-                    padding: "5px",
+                    padding: "3px",
                   }}
                 >
                   <motion.img
@@ -106,6 +107,7 @@ const CompanyPortfolio = () => {
           </div>
         </div>
 
+        {/* Company Info */}
         <div
           style={{
             flex: "1 1 280px",
