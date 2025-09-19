@@ -49,12 +49,13 @@ function FeaturedServices() {
     cursor: "pointer",
     color: "#fff",
     textAlign: "center",
+    animation: "flipIn 1s ease",
   };
 
   const cardHoverStyle = {
     backgroundColor: "#fff",
     color: "#000",
-    transform: "scale(1.08)",
+    transform: "scale(1.08) rotateY(10deg)",
   };
 
   const cardImage = {
@@ -89,6 +90,7 @@ function FeaturedServices() {
     cursor: "pointer",
     letterSpacing: "2px",
     transition: "all 0.3s ease",
+    animation: "fadeInUp 1.2s ease",
   };
 
   const buttonHoverStyle = {
@@ -103,8 +105,12 @@ function FeaturedServices() {
       <div style={servicesWrapper}>
         <div
           style={cardStyle}
-          onMouseEnter={(e) => Object.assign(e.currentTarget.style, cardHoverStyle)}
-          onMouseLeave={(e) => Object.assign(e.currentTarget.style, cardStyle)}
+          onMouseEnter={(e) =>
+            Object.assign(e.currentTarget.style, cardHoverStyle)
+          }
+          onMouseLeave={(e) =>
+            Object.assign(e.currentTarget.style, cardStyle)
+          }
           onClick={() => navigate("/customization")}
         >
           <img src={fs1} alt="Car Customization" style={cardImage} />
@@ -116,8 +122,12 @@ function FeaturedServices() {
         </div>
         <div
           style={cardStyle}
-          onMouseEnter={(e) => Object.assign(e.currentTarget.style, cardHoverStyle)}
-          onMouseLeave={(e) => Object.assign(e.currentTarget.style, cardStyle)}
+          onMouseEnter={(e) =>
+            Object.assign(e.currentTarget.style, cardHoverStyle)
+          }
+          onMouseLeave={(e) =>
+            Object.assign(e.currentTarget.style, cardStyle)
+          }
           onClick={() => navigate("/upgrade")}
         >
           <img src={fs2} alt="Bike Upgrades" style={cardImage} />
@@ -129,8 +139,12 @@ function FeaturedServices() {
         </div>
         <div
           style={cardStyle}
-          onMouseEnter={(e) => Object.assign(e.currentTarget.style, cardHoverStyle)}
-          onMouseLeave={(e) => Object.assign(e.currentTarget.style, cardStyle)}
+          onMouseEnter={(e) =>
+            Object.assign(e.currentTarget.style, cardHoverStyle)
+          }
+          onMouseLeave={(e) =>
+            Object.assign(e.currentTarget.style, cardStyle)
+          }
           onClick={() => navigate("/tuning")}
         >
           <img src={fs3} alt="Performance Tuning" style={cardImage} />
@@ -144,8 +158,12 @@ function FeaturedServices() {
 
       <button
         style={buttonStyle}
-        onMouseEnter={(e) => Object.assign(e.currentTarget.style, buttonHoverStyle)}
-        onMouseLeave={(e) => Object.assign(e.currentTarget.style, buttonStyle)}
+        onMouseEnter={(e) =>
+          Object.assign(e.currentTarget.style, buttonHoverStyle)
+        }
+        onMouseLeave={(e) =>
+          Object.assign(e.currentTarget.style, buttonStyle)
+        }
         onClick={() => navigate("/explore-services")}
       >
         Explore More Services
@@ -156,6 +174,20 @@ function FeaturedServices() {
           @keyframes fadeInDown {
             from { opacity: 0; transform: translateY(-40px); }
             to { opacity: 1; transform: translateY(0); }
+          }
+          @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          @keyframes flipIn {
+            from { 
+              transform: rotateY(90deg); 
+              opacity: 0; 
+            }
+            to { 
+              transform: rotateY(0deg); 
+              opacity: 1; 
+            }
           }
         `}
       </style>

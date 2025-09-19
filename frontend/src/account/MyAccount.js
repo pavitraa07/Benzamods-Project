@@ -7,23 +7,38 @@ function MyAccount() {
   const navigate = useNavigate();
 
   return (
-    <div style={{ 
-      background: "#0d0d0d", 
-      minHeight: "100vh", 
-      display: "flex", 
-      flexDirection: "column" 
-    }}>
+    <div
+      style={{
+        background: "#0d0d0d",
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
       <Header />
 
       {/* main grows to fill remaining space so footer stays at bottom */}
-      <main style={{ 
-        flex: 1, 
-        display: "flex", 
-        justifyContent: "center", 
-        alignItems: "center" 
-      }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: "30px", textAlign: "center" }}>
-          <h1 style={{ color: "#fff", fontSize: "42px", marginBottom: "30px" }}>⚡ My Account</h1>
+      <main
+        style={{
+          flex: 1,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "30px",
+            textAlign: "center",
+          }}
+        >
+          <h1
+            style={{ color: "#fff", fontSize: "42px", marginBottom: "30px" }}
+          >
+            ⚡ My Account
+          </h1>
 
           {/* Manage Orders Button */}
           <motion.button
@@ -39,7 +54,7 @@ function MyAccount() {
           <motion.button
             whileHover={{ scale: 1.08, boxShadow: "0px 0px 20px #fff" }}
             whileTap={{ scale: 0.95 }}
-            style={{ ...bigButtonStyle, background: "linear-gradient(135deg, #000, #333)" }}
+            style={bigButtonStyle}
             onClick={() => navigate("/manageprofile")}
           >
             👤 Manage Profile
@@ -47,7 +62,10 @@ function MyAccount() {
         </div>
       </main>
 
-      <Footer />
+      {/* Footer always at bottom */}
+      <div style={{ marginTop: "auto" }}>
+        <Footer />
+      </div>
     </div>
   );
 }
