@@ -17,10 +17,10 @@ const CompanyPortfolio = () => {
   };
 
   const images = [
-    "https://i.pinimg.com/736x/08/f6/ad/08f6adfcd1f77f6c3514a7db7fccd655.jpg",
-    "https://i.pinimg.com/1200x/86/7c/7e/867c7e51bc55db43a6764b70773078df.jpg",
-    "https://i.pinimg.com/1200x/4d/bb/26/4dbb2649c8821e2ee29a0d41a304942b.jpg",
-    "https://i.pinimg.com/1200x/67/9b/a6/679ba64055e1ad642f45d03a4ceaaa2e.jpg",
+    "https://i.pinimg.com/736x/68/23/a8/6823a85460551a26773e5e51a20fd10e.jpg",
+    "https://i.pinimg.com/1200x/00/4c/0f/004c0f7e802c11e35b0455998dfd491b.jpg",
+    "https://i.pinimg.com/1200x/63/d5/ac/63d5aca22a27bb05357f7e7cc3bdde40.jpg",
+    "https://i.pinimg.com/1200x/d6/e1/72/d6e172d9982b405fade9092c06697789.jpg",
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);
