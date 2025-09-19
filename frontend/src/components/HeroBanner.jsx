@@ -239,7 +239,7 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
 
   const navContainerStyle = {
     display: "flex",
-    gap: "15px",
+    gap: "12px",
     marginLeft: "auto",  
     flexWrap: "wrap",   
     maxWidth: "100%",        
