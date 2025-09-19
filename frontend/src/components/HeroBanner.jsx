@@ -18,6 +18,7 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [userName, setUserName] = useState("");
+  const [cartCount, setCartCount] = useState(2); // example count
   const navigate = useNavigate();
   const [isFirstRender, setIsFirstRender] = useState(true);
   const [prevSidebarOpen, setPrevSidebarOpen] = useState(false);
@@ -237,6 +238,7 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
     transition: "all 0.3s ease",
     fontFamily: "'Orbitron', sans-serif",
     textTransform: "uppercase",
+    position: "relative",
   };
 
   const sliderWrapper = {
@@ -345,6 +347,24 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
       </button>
       <button style={navButtonStyle} onClick={() => navigate("/cart")}>
         <FiShoppingCart /> Cart
+        {/* ✅ Show count only when logged in */}
+        {isLoggedIn && cartCount > 0 && (
+          <span
+            style={{
+              position: "absolute",
+              top: "-8px",
+              right: "-12px",
+              background: "red",
+              color: "white",
+              borderRadius: "50%",
+              padding: "2px 6px",
+              fontSize: "12px",
+              fontWeight: "700",
+            }}
+          >
+            {cartCount}
+          </span>
+        )}
       </button>
     </>
   );
@@ -377,6 +397,21 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
       </button>
       <button style={sidebarBtnStyle} onClick={() => navigate("/cart")}>
         <FiShoppingCart /> Cart
+        {isLoggedIn && cartCount > 0 && (
+          <span
+            style={{
+              marginLeft: "8px",
+              background: "red",
+              color: "white",
+              borderRadius: "50%",
+              padding: "2px 6px",
+              fontSize: "12px",
+              fontWeight: "700",
+            }}
+          >
+            {cartCount}
+          </span>
+        )}
       </button>
       <button style={sidebarBtnStyle} onClick={() => navigate("/adminpanel")}>
         Admin Panel
@@ -473,7 +508,6 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
         <p style={subHeadingStyle}>
           Premium modifications for Cars and Bikes
         </p>
-        {/* Wrap the buttons inside a flex column container */}
         <div
           style={{
             marginLeft: "120px",
@@ -537,23 +571,6 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
           from { opacity: 0; transform: translateX(30px); }
           to { opacity: 1; transform: translateX(0); }
         }
-        @keyframes slideIn {
-          from { transform: translateX(-100%); }
-          to { transform: translateX(0); }
-        }
-        @keyframes slideOut {
-          from { transform: translateX(0); }
-          to { transform: translateX(-100%); }
-        }
-        @keyframes scaleIn {
-          from { transform: scale(0.8); opacity: 0; }
-          to { transform: scale(1); opacity: 1; }
-        }
-        button:hover {
-          color: #00eaff;
-          text-shadow: 0 0 8px rgba(0,234,255,0.8);
-          transform: scale(1.05);
-        }
         @keyframes slideInLeft {
           from { transform: translateX(-100%); }
           to { transform: translateX(0); }
@@ -561,6 +578,10 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
         @keyframes slideOutRight {
           from { transform: translateX(0); }
           to { transform: translateX(-100%); }
+        }
+        @keyframes scaleIn {
+          from { transform: scale(0.8); opacity: 0; }
+          to { transform: scale(1); opacity: 1; }
         }
       `}</style>
     </div>
