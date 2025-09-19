@@ -24,6 +24,7 @@ import Portfolio from "./portfolio/Portfolio";
 import AdminPanel from "./auth/AdminPanel";
 import ProductsPortfolioDetails from "./portfolio/ProductsPortfolioDetails";
 import ServicesPortfolioDetails from "./portfolio/ServicesPortfolioDetails";
+import MyAccount from "./account/MyAccount";
 
 function App() {
   return (
@@ -67,6 +68,7 @@ function App() {
           <Route path="/adminpanel" element={<AdminPanel />} />
           <Route path="/productsportfoliodetails/:id" element={<ProductsPortfolioDetails />} />
           <Route path="/servicesportfoliodetails/:id" element={<ServicesPortfolioDetails />} />
+          <Route path="/myaccount" element={<MyAccount/>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>
