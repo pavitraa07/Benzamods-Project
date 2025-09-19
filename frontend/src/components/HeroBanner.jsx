@@ -18,6 +18,7 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [userName, setUserName] = useState("");
+  const [cartCount, setCartCount] = useState(0);
   const navigate = useNavigate();
   const [isFirstRender, setIsFirstRender] = useState(true);
   const [prevSidebarOpen, setPrevSidebarOpen] = useState(false);
@@ -57,10 +58,26 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
       }
     }
 
+    // Load cart count
+    const loadCartCount = () => {
+      try {
+        const cart = JSON.parse(localStorage.getItem("cart")) || [];
+        setCartCount(cart.length);
+      } catch {
+        setCartCount(0);
+      }
+    };
+
+    loadCartCount();
+    window.addEventListener("storage", loadCartCount);
+
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     window.addEventListener("resize", handleResize);
 
-    return () => window.removeEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("storage", loadCartCount);
+    };
   }, []);
 
   const handleScroll = (id) => {
@@ -237,6 +254,7 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
     transition: "all 0.3s ease",
     fontFamily: "'Orbitron', sans-serif",
     textTransform: "uppercase",
+    position: "relative",
   };
 
   const sliderWrapper = {
@@ -317,6 +335,7 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
     boxShadow: "0 0 25px rgba(255,255,255,0.9)",
   };
 
+  // --- Navigation buttons (header) ---
   const navButtons = (
     <>
       <button style={navButtonStyle} onClick={() => handleScroll("shop")}>
@@ -327,6 +346,9 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
       </button>
       <button style={navButtonStyle} onClick={() => handleScroll("reviews")}>
         Reviews
+      </button>
+      <button style={navButtonStyle} onClick={() => navigate("/adminpanel")}>
+        Admin Panel
       </button>
       {isLoggedIn ? (
         <button
@@ -345,6 +367,23 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
       </button>
       <button style={navButtonStyle} onClick={() => navigate("/cart")}>
         <FiShoppingCart /> Cart
+        {cartCount > 0 && (
+          <span
+            style={{
+              position: "absolute",
+              top: "-8px",
+              right: "-12px",
+              background: "red",
+              color: "white",
+              borderRadius: "50%",
+              padding: "2px 6px",
+              fontSize: "12px",
+              fontWeight: "700",
+            }}
+          >
+            {cartCount}
+          </span>
+        )}
       </button>
     </>
   );
@@ -359,6 +398,9 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
       </button>
       <button style={sidebarBtnStyle} onClick={() => handleScroll("reviews")}>
         Reviews
+      </button>
+      <button style={sidebarBtnStyle} onClick={() => navigate("/adminpanel")}>
+        Admin Panel
       </button>
       {isLoggedIn ? (
         <button
@@ -376,10 +418,8 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
         <FaEnvelope /> Contact
       </button>
       <button style={sidebarBtnStyle} onClick={() => navigate("/cart")}>
-        <FiShoppingCart /> Cart
-      </button>
-      <button style={sidebarBtnStyle} onClick={() => navigate("/adminpanel")}>
-        Admin Panel
+        <FiShoppingCart /> Cart{" "}
+        {cartCount > 0 && <span>({cartCount})</span>}
       </button>
       <button style={sidebarBtnStyle} onClick={() => navigate("/myaccount")}>
         My Account
@@ -473,7 +513,6 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
         <p style={subHeadingStyle}>
           Premium modifications for Cars and Bikes
         </p>
-        {/* Wrap the buttons inside a flex column container */}
         <div
           style={{
             marginLeft: "120px",
