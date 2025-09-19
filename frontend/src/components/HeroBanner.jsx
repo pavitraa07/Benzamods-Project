@@ -243,7 +243,6 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
     marginLeft: "auto",  
     flexWrap: "wrap",   
     maxWidth: "100%",        
-    overflow: "hidden",  
     animation: "fadeInRight 1s ease",
   };
 
