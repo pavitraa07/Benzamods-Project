@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 const API_BASE = process.env.REACT_APP_API_BASE;
 
@@ -100,8 +101,6 @@ function ServiceDetails() {
         token
       );
 
-      // ✅ Removed 'res.ok' check
-
       setMessage("✅ Inquiry submitted successfully!");
       setForm({
         name: "",
@@ -161,14 +160,16 @@ function ServiceDetails() {
         }}
       >
         {service.gallery?.slice(0, 6).map((img, idx) => (
-          <div
+          <motion.div
             key={idx}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, delay: idx * 0.1 }}
             style={{
               overflow: "hidden",
               borderRadius: "16px",
               gridColumn: idx === 0 ? "span 2" : "span 1",
               gridRow: idx === 0 ? "span 2" : "span 1",
-              transition: "all 0.3s ease",
             }}
           >
             <img
@@ -188,12 +189,15 @@ function ServiceDetails() {
                 (e.currentTarget.style.transform = "scale(1)")
               }
             />
-          </div>
+          </motion.div>
         ))}
       </div>
 
       {/* Description + Form */}
-      <div
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7 }}
         style={{
           flex: "1 1 300px",
           background: "linear-gradient(145deg, #1c1c1c, #292929)",
@@ -305,7 +309,7 @@ function ServiceDetails() {
             <div style={{ color: "#fff", opacity: 0.85 }}>{message}</div>
           )}
         </form>
-      </div>
+      </motion.div>
 
       {/* Login Prompt */}
       {showLoginPrompt && (
