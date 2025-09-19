@@ -54,7 +54,7 @@ function MyAccount() {
           <motion.button
             whileHover={{ scale: 1.08, boxShadow: "0px 0px 20px #fff" }}
             whileTap={{ scale: 0.95 }}
-            style={bigButtonStyle}
+            style={{ ...bigButtonStyle, marginBottom: "60px" }}
             onClick={() => navigate("/manageprofile")}
           >
             👤 Manage Profile
