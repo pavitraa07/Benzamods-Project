@@ -337,14 +337,12 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
       <button style={sidebarBtnStyle} onClick={() => navigate("/contact")}><FaEnvelope /> Contact</button>
       <button style={sidebarBtnStyle} onClick={() => navigate("/cart")}><FiShoppingCart /> Cart</button>
       <button style={sidebarBtnStyle} onClick={() => navigate("/adminpanel")}>Admin Panel</button>
-      <button style={sidebarBtnStyle} onClick={() => navigate("/manageorders")}>Manage Orders</button>
-      <button style={sidebarBtnStyle} onClick={() => navigate("/manageprofile")}>My Profile</button>
+      <button style={sidebarBtnStyle} onClick={() => navigate("/myaccount")}>My Account</button>
     </>
   ) : (
     <>
       <button style={sidebarBtnStyle} onClick={() => navigate("/adminpanel")}>Admin Panel</button>
-      <button style={sidebarBtnStyle} onClick={() => navigate("/manageorders")}>Manage Orders</button>
-      <button style={sidebarBtnStyle} onClick={() => navigate("/manageprofile")}>My Profile</button>
+      <button style={sidebarBtnStyle} onClick={() => navigate("/myaccount")}>My Account</button>
     </>
   );
 
