@@ -30,10 +30,14 @@ async function deleteAdmin(id) {
 function ManageAdmins() {
   const [admins, setAdmins] = useState([]);
   const [adminForm, setAdminForm] = useState({ username: "", password: "" });
-  const [editingAdminId, setEditingAdminId] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [showConfirm, setShowConfirm] = useState(false);
   const [adminToDelete, setAdminToDelete] = useState(null);
+
+  // edit modal state
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editAdminForm, setEditAdminForm] = useState({ username: "", password: "" });
+  const [editingAdminId, setEditingAdminId] = useState(null);
 
   useEffect(() => {
     fetchAdmins();
@@ -46,19 +50,25 @@ function ManageAdmins() {
 
   const handleAdminSubmit = async (e) => {
     e.preventDefault();
-    if (editingAdminId) {
-      await updateAdmin(editingAdminId, adminForm);
-    } else {
-      await addAdmin(adminForm);
-    }
+    await addAdmin(adminForm);
     fetchAdmins();
     setAdminForm({ username: "", password: "" });
-    setEditingAdminId(null);
   };
 
   const handleEditClick = (admin) => {
-    setAdminForm({ username: admin.username, password: "" }); // don’t prefill password from DB (hashed) → keep empty
+    setEditAdminForm({ username: admin.username, password: "" }); // leave password blank
     setEditingAdminId(admin._id);
+    setShowEditModal(true);
+  };
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    if (!editingAdminId) return;
+    await updateAdmin(editingAdminId, editAdminForm);
+    fetchAdmins();
+    setShowEditModal(false);
+    setEditingAdminId(null);
+    setEditAdminForm({ username: "", password: "" });
   };
 
   const handleDeleteClick = (admin) => {
@@ -90,7 +100,7 @@ function ManageAdmins() {
         👑 Manage Admins
       </h2>
 
-      {/* Add / Edit Admin Form */}
+      {/* Add Admin Form */}
       <div style={formCardStyle}>
         <form onSubmit={handleAdminSubmit} style={formStyle}>
           <input
@@ -103,32 +113,15 @@ function ManageAdmins() {
           />
           <input
             type="password"
-            placeholder={editingAdminId ? "Enter new password" : "Password"}
+            placeholder="Password"
             value={adminForm.password}
             onChange={(e) => setAdminForm({ ...adminForm, password: e.target.value })}
             style={inputStyle}
             required
           />
           <button type="submit" style={buttonStyle}>
-            {editingAdminId ? "💾 Save Changes" : "➕ Add Admin"}
+            ➕ Add Admin
           </button>
-          {editingAdminId && (
-            <button
-              type="button"
-              onClick={() => {
-                setEditingAdminId(null);
-                setAdminForm({ username: "", password: "" });
-              }}
-              style={{
-                ...buttonStyle,
-                background: "#6c757d",
-                color: "#fff",
-                marginLeft: "10px",
-              }}
-            >
-              Cancel
-            </button>
-          )}
         </form>
       </div>
 
@@ -181,7 +174,7 @@ function ManageAdmins() {
                         padding: "6px 12px",
                         borderRadius: "6px",
                         border: "none",
-                        background: "#ffc107",
+                        background: "#fff",
                         color: "#000",
                         fontWeight: "600",
                         cursor: "pointer",
@@ -218,65 +211,66 @@ function ManageAdmins() {
         )}
       </div>
 
-      {/* Delete Confirmation */}
+      {/* Delete Confirmation Modal */}
       {showConfirm && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            background: "rgba(0,0,0,0.7)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: 1000,
-          }}
-        >
-          <div
-            style={{
-              background: "#fff",
-              color: "#000",
-              padding: "30px",
-              borderRadius: "12px",
-              minWidth: "320px",
-              textAlign: "center",
-            }}
-          >
+        <div style={modalOverlayStyle}>
+          <div style={modalContentStyle}>
             <p style={{ fontSize: "18px", marginBottom: "20px" }}>
               Are you sure you want to delete <strong>{adminToDelete?.username}</strong>?
             </p>
             <div style={{ display: "flex", justifyContent: "center", gap: "15px" }}>
               <button
                 onClick={handleConfirmDelete}
-                style={{
-                  padding: "10px 20px",
-                  borderRadius: "8px",
-                  border: "none",
-                  background: "#dc3545",
-                  color: "#fff",
-                  fontWeight: "600",
-                  cursor: "pointer",
-                }}
+                style={{ ...modalButtonStyle, background: "#dc3545", color: "#fff" }}
               >
                 Yes, Delete
               </button>
               <button
                 onClick={handleCancelDelete}
-                style={{
-                  padding: "10px 20px",
-                  borderRadius: "8px",
-                  border: "none",
-                  background: "#6c757d",
-                  color: "#fff",
-                  fontWeight: "600",
-                  cursor: "pointer",
-                }}
+                style={{ ...modalButtonStyle, background: "#6c757d", color: "#fff" }}
               >
                 Cancel
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Credentials Modal */}
+      {showEditModal && (
+        <div style={modalOverlayStyle}>
+          <div style={modalContentStyle}>
+            <h3 style={{ marginBottom: "20px" }}>✏️ Edit Credentials</h3>
+            <form onSubmit={handleEditSubmit} style={formStyle}>
+              <input
+                type="text"
+                placeholder="Username"
+                value={editAdminForm.username}
+                onChange={(e) => setEditAdminForm({ ...editAdminForm, username: e.target.value })}
+                style={inputStyle}
+                required
+              />
+              <input
+                type="password"
+                placeholder="Enter new password"
+                value={editAdminForm.password}
+                onChange={(e) => setEditAdminForm({ ...editAdminForm, password: e.target.value })}
+                style={inputStyle}
+                required
+              />
+              <div style={{ display: "flex", justifyContent: "center", gap: "15px" }}>
+                <button type="submit" style={{ ...modalButtonStyle, background: "#28a745", color: "#fff" }}>
+                  Save Changes
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowEditModal(false)}
+                  style={{ ...modalButtonStyle, background: "#6c757d", color: "#fff" }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
@@ -340,6 +334,33 @@ const tdStyle = {
   padding: "12px 14px",
   borderBottom: "1px solid #333",
   fontSize: "15px",
+};
+const modalOverlayStyle = {
+  position: "fixed",
+  top: 0,
+  left: 0,
+  width: "100%",
+  height: "100%",
+  background: "rgba(0,0,0,0.7)",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  zIndex: 1000,
+};
+const modalContentStyle = {
+  background: "#1c1c1c",
+  color: "#fff",
+  padding: "30px",
+  borderRadius: "12px",
+  minWidth: "350px",
+  textAlign: "center",
+};
+const modalButtonStyle = {
+  padding: "10px 20px",
+  borderRadius: "8px",
+  border: "none",
+  fontWeight: "600",
+  cursor: "pointer",
 };
 
 export default ManageAdmins;
