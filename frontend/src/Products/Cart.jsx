@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Footer from "../components/Footer"
+import Footer from "../components/Footer";
 import Header from "../components/Header";
 
 export default function Cart() {
@@ -11,7 +11,6 @@ export default function Cart() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const navigate = useNavigate();
 
-  //  Check authentication
   const isAuthenticated = !!localStorage.getItem("token");
 
   useEffect(() => {
@@ -20,13 +19,23 @@ export default function Cart() {
     } else {
       const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
       setCartItems(storedCart);
+
+      // notify HeroBanner of current count
+      window.dispatchEvent(
+        new CustomEvent("cartUpdated", { detail: { count: storedCart.length } })
+      );
     }
   }, [isAuthenticated]);
 
-  const handleRemove = (index) => {
-    const updatedCart = cartItems.filter((_, i) => i !== index);
+  const handleRemove = (productId) => {
+    const updatedCart = cartItems.filter((item) => item._id !== productId);
     setCartItems(updatedCart);
     localStorage.setItem("cart", JSON.stringify(updatedCart));
+
+    // notify HeroBanner of new count
+    window.dispatchEvent(
+      new CustomEvent("cartUpdated", { detail: { count: updatedCart.length } })
+    );
   };
 
   const handleSelectToggle = (product) => {
@@ -65,7 +74,7 @@ export default function Cart() {
 
   return (
     <div style={{ background: "#0d0d0d", minHeight: "100vh", padding: "40px" }}>
-       <Header />  
+      <Header />
       {showLoginModal && (
         <div
           style={{
@@ -96,7 +105,7 @@ export default function Cart() {
             }}
           >
             <h2 style={{ marginBottom: "15px", fontSize: "24px" }}>
-               Login Required
+              Login Required
             </h2>
             <p style={{ marginBottom: "25px", color: "#bbb", fontSize: "15px" }}>
               Please log in to view and manage your cart products.
@@ -210,9 +219,9 @@ export default function Cart() {
                 gap: "25px",
               }}
             >
-              {filteredItems.map((product, index) => (
+              {filteredItems.map((product) => (
                 <div
-                  key={index}
+                  key={product._id}
                   className="cart-card"
                   style={{
                     background: "linear-gradient(145deg, #1c1c1c, #292929)",
@@ -267,7 +276,7 @@ export default function Cart() {
                       </label>
                     ) : (
                       <button
-                        onClick={() => handleRemove(index)}
+                        onClick={() => handleRemove(product._id)}
                         style={{
                           marginTop: "10px",
                           padding: "10px 18px",
