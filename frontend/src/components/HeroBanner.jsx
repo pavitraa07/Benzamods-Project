@@ -64,7 +64,7 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
   const handleScroll = (id) => {
   const element = document.getElementById(id);
   if (element) {
-    const yOffset = -80; // optional: adjust for fixed header height
+    const yOffset = -80; 
     const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
     window.scrollTo({ top: y, behavior: "smooth" });
   }
@@ -406,7 +406,7 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
       onMouseEnter={(e) => Object.assign(e.target.style, buttonHover)} 
       onMouseLeave={(e) => Object.assign(e.target.style, buttonStyle)}
     >
-      Priority Services
+      Services
     </Link>
 
     <Link 
