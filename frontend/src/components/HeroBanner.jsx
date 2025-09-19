@@ -240,7 +240,8 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
   const navContainerStyle = {
     display: "flex",
     gap: "15px",
-    marginLeft: "250px",
+    marginLeft: "auto",  
+    flexWrap: "wrap",   
     animation: "fadeInRight 1s ease",
   };
 
