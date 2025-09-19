@@ -399,7 +399,7 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
   <p style={subHeadingStyle}>Premium modifications for Cars and Bikes</p>
 
   {/* Wrap the buttons inside a flex column container */}
-  <div style={{ marginLeft:"80px", display: "flex", flexDirection: "row", gap: "20px", alignItems: "center" }}>
+  <div style={{ marginLeft:"120px", display: "flex", flexDirection: "row", gap: "20px", alignItems: "center" }}>
     <Link 
       to="services/priority-services" 
       style={buttonStyle} 
