@@ -21,11 +21,13 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
   const navigate = useNavigate();
   const [isFirstRender, setIsFirstRender] = useState(true);
   const [prevSidebarOpen, setPrevSidebarOpen] = useState(false);
+  const [cartCount, setCartCount] = useState(0); // ✅ cart count state
 
   useEffect(() => {
     setIsFirstRender(false);
   }, []);
 
+  // ✅ Slideshow effect
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
@@ -33,6 +35,7 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
     return () => clearInterval(interval);
   }, [images.length]);
 
+  // ✅ Check login + load cart count
   useEffect(() => {
     const link = document.createElement("link");
     link.href =
@@ -59,6 +62,10 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
 
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     window.addEventListener("resize", handleResize);
+
+    // ✅ Load cart count from localStorage
+    const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+    setCartCount(storedCart.length);
 
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -237,86 +244,10 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
     transition: "all 0.3s ease",
     fontFamily: "'Orbitron', sans-serif",
     textTransform: "uppercase",
+    position: "relative",
   };
 
-  const sliderWrapper = {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
-    display: "flex",
-    transition: "transform 1s ease-in-out",
-    transform: `translateX(-${currentIndex * 100}%)`,
-    zIndex: 0,
-  };
-
-  const slideStyle = {
-    minWidth: "100%",
-    height: "100%",
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-  };
-
-  const overlayStyle = {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
-    backgroundColor: "rgba(0,0,0,0.5)",
-    zIndex: 1,
-  };
-
-  const textContainer = {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    textAlign: "center",
-    zIndex: 2,
-    animation: "fadeInUp 2s ease",
-  };
-
-  const headingStyle = {
-    fontSize: "56px",
-    fontWeight: "700",
-    color: "#ffffff",
-    letterSpacing: "4px",
-    textShadow: "0 0 25px rgba(255,255,255,0.9)",
-    marginBottom: "10px",
-  };
-
-  const subHeadingStyle = {
-    fontSize: "24px",
-    fontWeight: "500",
-    color: "#ffffff",
-    letterSpacing: "2px",
-    textShadow: "0 0 10px rgba(255,255,255,0.8)",
-    marginBottom: "30px",
-  };
-
-  const buttonStyle = {
-    padding: "12px 30px",
-    fontSize: "18px",
-    fontWeight: "700",
-    letterSpacing: "2px",
-    backgroundColor: "#fcfcfcff",
-    color: "#0c0202ff",
-    border: "none",
-    borderRadius: "25px",
-    cursor: "pointer",
-    textDecoration: "none",
-    boxShadow: "0 0 20px rgba(8, 8, 8, 0.6)",
-    transition: "all 0.3s ease",
-  };
-
-  const buttonHover = {
-    backgroundColor: "#000000ff",
-    color: "#fffefeff",
-    boxShadow: "0 0 25px rgba(255,255,255,0.9)",
-  };
-
+  // ✅ Desktop nav buttons
   const navButtons = (
     <>
       <button style={navButtonStyle} onClick={() => handleScroll("shop")}>
@@ -327,6 +258,10 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
       </button>
       <button style={navButtonStyle} onClick={() => handleScroll("reviews")}>
         Reviews
+      </button>
+      {/* Admin Panel always visible in header */}
+      <button style={navButtonStyle} onClick={() => navigate("/adminpanel")}>
+        Admin Panel
       </button>
       {isLoggedIn ? (
         <button
@@ -345,10 +280,28 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
       </button>
       <button style={navButtonStyle} onClick={() => navigate("/cart")}>
         <FiShoppingCart /> Cart
+        {cartCount > 0 && (
+          <span
+            style={{
+              position: "absolute",
+              top: "-8px",
+              right: "-10px",
+              background: "red",
+              color: "white",
+              borderRadius: "50%",
+              padding: "2px 6px",
+              fontSize: "12px",
+              fontWeight: "bold",
+            }}
+          >
+            {cartCount}
+          </span>
+        )}
       </button>
     </>
   );
 
+  // ✅ Sidebar buttons (mobile view)
   const sidebarButtons = isMobile ? (
     <>
       <button style={sidebarBtnStyle} onClick={() => handleScroll("shop")}>
@@ -359,6 +312,9 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
       </button>
       <button style={sidebarBtnStyle} onClick={() => handleScroll("reviews")}>
         Reviews
+      </button>
+      <button style={sidebarBtnStyle} onClick={() => navigate("/adminpanel")}>
+        Admin Panel
       </button>
       {isLoggedIn ? (
         <button
@@ -376,10 +332,7 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
         <FaEnvelope /> Contact
       </button>
       <button style={sidebarBtnStyle} onClick={() => navigate("/cart")}>
-        <FiShoppingCart /> Cart
-      </button>
-      <button style={sidebarBtnStyle} onClick={() => navigate("/adminpanel")}>
-        Admin Panel
+        <FiShoppingCart /> Cart ({cartCount})
       </button>
       <button style={sidebarBtnStyle} onClick={() => navigate("/myaccount")}>
         My Account
@@ -398,6 +351,7 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
 
   return (
     <div style={bannerStyle}>
+      {/* Sidebar */}
       <div style={sidebarStyle}>
         <button
           style={{
@@ -433,6 +387,7 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
         </div>
       </div>
 
+      {/* Header */}
       <div style={headerStyle}>
         <button
           onClick={toggleSidebar}
@@ -457,6 +412,7 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
         {!isMobile && <div style={navContainerStyle}>{navButtons}</div>}
       </div>
 
+      {/* Image Slider */}
       <div style={sliderWrapper}>
         {images.map((img, index) => (
           <div
@@ -468,12 +424,12 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
 
       <div style={overlayStyle}></div>
 
+      {/* Center Text */}
       <div style={textContainer}>
         <h2 style={headingStyle}>WELCOME TO BENZAMODS!</h2>
         <p style={subHeadingStyle}>
           Premium modifications for Cars and Bikes
         </p>
-        {/* Wrap the buttons inside a flex column container */}
         <div
           style={{
             marginLeft: "120px",
@@ -502,6 +458,7 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
         </div>
       </div>
 
+      {/* Logout Confirm */}
       {showLogoutConfirm && (
         <div style={confirmOverlay}>
           <div style={confirmBox}>
@@ -524,6 +481,7 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
         </div>
       )}
 
+      {/* Animations */}
       <style>{`
         @keyframes fadeInUp {
           from { opacity: 0; transform: translate(-50%, -40%); }
@@ -537,11 +495,11 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
           from { opacity: 0; transform: translateX(30px); }
           to { opacity: 1; transform: translateX(0); }
         }
-        @keyframes slideIn {
+        @keyframes slideInLeft {
           from { transform: translateX(-100%); }
           to { transform: translateX(0); }
         }
-        @keyframes slideOut {
+        @keyframes slideOutRight {
           from { transform: translateX(0); }
           to { transform: translateX(-100%); }
         }
@@ -553,14 +511,6 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
           color: #00eaff;
           text-shadow: 0 0 8px rgba(0,234,255,0.8);
           transform: scale(1.05);
-        }
-        @keyframes slideInLeft {
-          from { transform: translateX(-100%); }
-          to { transform: translateX(0); }
-        }
-        @keyframes slideOutRight {
-          from { transform: translateX(0); }
-          to { transform: translateX(-100%); }
         }
       `}</style>
     </div>
