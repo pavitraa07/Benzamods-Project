@@ -15,6 +15,14 @@ async function addAdmin(admin) {
   });
 }
 
+async function updateAdmin(id, admin) {
+  await fetch(`${API_BASE}/admins/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(admin),
+  });
+}
+
 async function deleteAdmin(id) {
   await fetch(`${API_BASE}/admins/${id}`, { method: "DELETE" });
 }
@@ -22,6 +30,7 @@ async function deleteAdmin(id) {
 function ManageAdmins() {
   const [admins, setAdmins] = useState([]);
   const [adminForm, setAdminForm] = useState({ username: "", password: "" });
+  const [editingAdminId, setEditingAdminId] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [showConfirm, setShowConfirm] = useState(false);
   const [adminToDelete, setAdminToDelete] = useState(null);
@@ -37,9 +46,19 @@ function ManageAdmins() {
 
   const handleAdminSubmit = async (e) => {
     e.preventDefault();
-    await addAdmin(adminForm);
+    if (editingAdminId) {
+      await updateAdmin(editingAdminId, adminForm);
+    } else {
+      await addAdmin(adminForm);
+    }
     fetchAdmins();
     setAdminForm({ username: "", password: "" });
+    setEditingAdminId(null);
+  };
+
+  const handleEditClick = (admin) => {
+    setAdminForm({ username: admin.username, password: "" }); // don’t prefill password from DB (hashed) → keep empty
+    setEditingAdminId(admin._id);
   };
 
   const handleDeleteClick = (admin) => {
@@ -71,7 +90,7 @@ function ManageAdmins() {
         👑 Manage Admins
       </h2>
 
-      {/* Add Admin Form */}
+      {/* Add / Edit Admin Form */}
       <div style={formCardStyle}>
         <form onSubmit={handleAdminSubmit} style={formStyle}>
           <input
@@ -84,15 +103,32 @@ function ManageAdmins() {
           />
           <input
             type="password"
-            placeholder="Password"
+            placeholder={editingAdminId ? "Enter new password" : "Password"}
             value={adminForm.password}
             onChange={(e) => setAdminForm({ ...adminForm, password: e.target.value })}
             style={inputStyle}
             required
           />
           <button type="submit" style={buttonStyle}>
-            ➕ Add Admin
+            {editingAdminId ? "💾 Save Changes" : "➕ Add Admin"}
           </button>
+          {editingAdminId && (
+            <button
+              type="button"
+              onClick={() => {
+                setEditingAdminId(null);
+                setAdminForm({ username: "", password: "" });
+              }}
+              style={{
+                ...buttonStyle,
+                background: "#6c757d",
+                color: "#fff",
+                marginLeft: "10px",
+              }}
+            >
+              Cancel
+            </button>
+          )}
         </form>
       </div>
 
@@ -139,6 +175,24 @@ function ManageAdmins() {
                 >
                   <td style={tdStyle}>{a.username}</td>
                   <td style={tdStyle}>
+                    <button
+                      onClick={() => handleEditClick(a)}
+                      style={{
+                        padding: "6px 12px",
+                        borderRadius: "6px",
+                        border: "none",
+                        background: "#ffc107",
+                        color: "#000",
+                        fontWeight: "600",
+                        cursor: "pointer",
+                        marginRight: "10px",
+                        transition: "transform 0.3s ease",
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+                      onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+                    >
+                      Edit Credentials
+                    </button>
                     <button
                       onClick={() => handleDeleteClick(a)}
                       style={{
@@ -268,7 +322,7 @@ const buttonStyle = {
 };
 const tableStyle = {
   width: "60%",
-  margin: "0 auto", 
+  margin: "0 auto",
   borderCollapse: "collapse",
   background: "#1a1a1a",
   borderRadius: "12px",

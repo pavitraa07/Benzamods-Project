@@ -1,7 +1,6 @@
 import express from "express";
 import bcrypt from "bcryptjs";
 import Admin from "../models/Admin.js";
-import User from "../models/User.js";
 
 const router = express.Router();
 
@@ -81,6 +80,38 @@ router.post("/login", async (req, res) => {
       adminId: admin._id,
       username: admin.username,
     });
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.put("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+      return res.status(400).json({ message: "All fields required" });
+    }
+
+    const existing = await Admin.findOne({ username, _id: { $ne: id } });
+    if (existing) {
+      return res.status(400).json({ message: "Username already taken" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const updatedAdmin = await Admin.findByIdAndUpdate(
+      id,
+      { username, password: hashedPassword },
+      { new: true }
+    );
+
+    if (!updatedAdmin) {
+      return res.status(404).json({ message: "Admin not found" });
+    }
+
+    res.json({ message: "Admin updated successfully", admin: updatedAdmin });
   } catch (err) {
     res.status(500).json({ message: "Server error" });
   }
