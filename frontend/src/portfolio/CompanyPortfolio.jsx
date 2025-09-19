@@ -64,14 +64,18 @@ const CompanyPortfolio = () => {
         }}
       >
         {/* Image Carousel */}
-        <div style={{ flex: "1 1 350px", minWidth: "180px" }}>
+        <motion.div
+          style={{ flex: "1 1 320px", minWidth: "260px", borderRadius: "20px" }}
+          whileHover={{ scale: 1.03, boxShadow: "0 15px 30px rgba(255,102,0,0.5)" }}
+          transition={{ duration: 0.3 }}
+        >
           <div
             style={{
               position: "relative",
               overflow: "hidden",
               borderRadius: "20px",
               border: "2px solid #fff",
-              height: "510px",
+              height: "520px",
             }}
           >
             <motion.div
@@ -97,15 +101,16 @@ const CompanyPortfolio = () => {
                       objectFit: "cover",
                       borderRadius: "15px",
                       border: "2px solid #fff",
+                      transform: "scale(1.05)", // default scale like hover
                     }}
-                    whileHover={{ scale: 1.05 }}
+                    whileHover={{ scale: 1.08 }}
                     transition={{ duration: 0.3 }}
                   />
                 </div>
               ))}
             </motion.div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Company Info */}
         <div
