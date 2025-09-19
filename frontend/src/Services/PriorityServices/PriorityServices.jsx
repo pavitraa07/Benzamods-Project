@@ -88,7 +88,7 @@ function PriorityServices() {
           <meta property="og:type" content="website" />
         </Helmet>
 
-        <h2 style={headingStyle}>Priority Services</h2>
+        <h2 style={headingStyle}>Our Services</h2>
 
         <div style={gridStyle}>
           {/* Car Services Card */}
