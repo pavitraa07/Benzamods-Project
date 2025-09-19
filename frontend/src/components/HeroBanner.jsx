@@ -18,7 +18,7 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [userName, setUserName] = useState("");
-  const [cartCount, setCartCount] = useState(2); // example count
+  const [cartCount, setCartCount] = useState(0);
   const navigate = useNavigate();
   const [isFirstRender, setIsFirstRender] = useState(true);
   const [prevSidebarOpen, setPrevSidebarOpen] = useState(false);
@@ -33,6 +33,36 @@ function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
     }, 5000);
     return () => clearInterval(interval);
   }, [images.length]);
+
+  useEffect(() => {
+  const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+  setCartCount(storedCart.length);
+
+  const onCartUpdated = (e) => {
+    if (e && e.detail && typeof e.detail.count === "number") {
+      setCartCount(e.detail.count);
+    } else {
+      const c = JSON.parse(localStorage.getItem("cart")) || [];
+      setCartCount(c.length);
+    }
+  };
+
+  const onStorage = (ev) => {
+    if (ev.key === "cart") {
+      const c = JSON.parse(localStorage.getItem("cart")) || [];
+      setCartCount(c.length);
+    }
+  };
+
+  window.addEventListener("cartUpdated", onCartUpdated);
+  window.addEventListener("storage", onStorage);
+
+  return () => {
+    window.removeEventListener("cartUpdated", onCartUpdated);
+    window.removeEventListener("storage", onStorage);
+  };
+}, []);
+
 
   useEffect(() => {
     const link = document.createElement("link");
