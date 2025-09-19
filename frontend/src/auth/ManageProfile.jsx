@@ -19,7 +19,9 @@ function ManageProfile() {
   const [editForm, setEditForm] = useState({ name: "", email: "", contact: "", address: "" });
 
   const [showPasswordModal, setShowPasswordModal] = useState(false);
-  const [passwordForm, setPasswordForm] = useState({ oldPassword: "", newPassword: "", confirmPassword: "" });
+  const [passwordForm, setPasswordForm] = useState({ newPassword: "", confirmPassword: "" });
+
+  const [successMessage, setSuccessMessage] = useState("");
 
   const navigate = useNavigate();
 
@@ -71,12 +73,18 @@ function ManageProfile() {
     navigate("/login");
   };
 
+  const showSuccess = (msg) => {
+    setSuccessMessage(msg);
+    setTimeout(() => setSuccessMessage(""), 3000);
+  };
+
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     try {
       await updateUser(user._id, editForm);
       setUser({ ...user, ...editForm });
       setShowEditModal(false);
+      showSuccess("✅ Profile updated successfully!");
     } catch (err) {
       console.error("Update error:", err);
     }
@@ -91,7 +99,8 @@ function ManageProfile() {
     try {
       await updateUser(user._id, { password: passwordForm.newPassword });
       setShowPasswordModal(false);
-      setPasswordForm({ oldPassword: "", newPassword: "", confirmPassword: "" });
+      setPasswordForm({ newPassword: "", confirmPassword: "" });
+      showSuccess("🔑 Password changed successfully!");
     } catch (err) {
       console.error("Password update error:", err);
     }
@@ -142,6 +151,9 @@ function ManageProfile() {
       </main>
 
       <Footer />
+
+      {/* ✅ Success Toast */}
+      {successMessage && <div style={toastStyle}>{successMessage}</div>}
 
       {/* Edit Profile Modal */}
       {showEditModal && (
@@ -204,14 +216,6 @@ function ManageProfile() {
           <div style={modalContent}>
             <h3 style={{ marginBottom: "20px" }}>🔑 Change Password</h3>
             <form onSubmit={handlePasswordSubmit} style={formStyle}>
-              <input
-                type="password"
-                placeholder="Old Password"
-                value={passwordForm.oldPassword}
-                onChange={(e) => setPasswordForm({ ...passwordForm, oldPassword: e.target.value })}
-                style={inputStyle}
-                required
-              />
               <input
                 type="password"
                 placeholder="New Password"
@@ -299,6 +303,19 @@ const inputStyle = {
   background: "#2c2c2c",
   color: "#fff",
   fontSize: "16px",
+};
+const toastStyle = {
+  position: "fixed",
+  bottom: "20px",
+  right: "20px",
+  background: "linear-gradient(145deg, #28a745, #218838)",
+  color: "#fff",
+  padding: "12px 20px",
+  borderRadius: "8px",
+  fontWeight: "600",
+  boxShadow: "0 4px 15px rgba(0,0,0,0.4)",
+  animation: "fadeInOut 3s ease",
+  zIndex: 1100,
 };
 
 export default ManageProfile;
