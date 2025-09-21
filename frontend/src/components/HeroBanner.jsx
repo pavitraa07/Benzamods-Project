@@ -4,18 +4,14 @@ import { FaEnvelope } from "react-icons/fa";
 import { FiShoppingCart, FiMenu, FiX } from "react-icons/fi";
 import { jwtDecode } from "jwt-decode";
 
-import bm1 from "../assets/bm1.jpg";
-import bm2 from "../assets/bm2.jpg";
-import bm3 from "../assets/bm3.jpg";
-import bm7 from "../assets/bm7.jpg";
+
 import bm8 from "../assets/bm8.jpg";
-import bm9 from "../assets/bm9.jpg";
 import bm10 from "../assets/bm10.jpg";
 import bm11 from "../assets/bm11.jpg";
 import bm12 from "../assets/bm12.jpg";
 import bmlogo from "../assets/bmlogo1.jpg";
 
-function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
+function HeroBanner() {
   const images = [bm8, bm11, bm10, bm12];
   const [currentIndex, setCurrentIndex] = useState(0);
   const [sidebarOpen, setSidebarOpen] = useState(false);
