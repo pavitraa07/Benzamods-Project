@@ -9,10 +9,11 @@ import bm2 from "../assets/bm2.jpg";
 import bm3 from "../assets/bm3.jpg";
 import bm7 from "../assets/bm7.jpg";
 import bm8 from "../assets/bm8.jpg";
+import bm9 from "../assets/bm9.jpg";
 import bmlogo from "../assets/bmlogo1.jpg";
 
 function HeroBanner({ shopRef, servicesRef, reviewsRef }) {
-  const images = [bm8, bm2, bm3, bm7];
+  const images = [bm8, bm9, bm3, bm7];
   const [currentIndex, setCurrentIndex] = useState(0);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
