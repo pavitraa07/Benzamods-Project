@@ -83,7 +83,7 @@ function QuickNavigation() {
           style={{
             ...cardStyle,
             backgroundImage:
-              "url('https://i.pinimg.com/736x/68/23/a8/6823a85460551a26773e5e51a20fd10e.jpg')",
+              "url('https://i.pinimg.com/736x/48/81/7c/48817c627787ed935e9c4f94cd2f7b8f.jpg')",
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.transform = "scale(1.08)";
