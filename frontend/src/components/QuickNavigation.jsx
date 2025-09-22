@@ -22,7 +22,7 @@ function QuickNavigation() {
   const headingStyle = {
     fontSize: "42px",
     fontWeight: "700",
-    marginBottom: "50px",
+    marginBottom: "70px", // increased space below heading
     letterSpacing: "4px",
     textTransform: "uppercase",
     animation: "slideDown 1.5s ease",
@@ -36,8 +36,8 @@ function QuickNavigation() {
   };
 
   const cardStyle = {
-    width: "300px",
-    height: "200px",
+    width: "350px", // increased width
+    height: "250px", // increased height
     borderRadius: "20px",
     overflow: "hidden",
     position: "relative",
@@ -66,7 +66,7 @@ function QuickNavigation() {
   };
 
   const textStyle = {
-    fontSize: "26px",
+    fontSize: "28px", // slightly bigger text
     fontWeight: "700",
     letterSpacing: "2px",
     textTransform: "uppercase",
@@ -76,6 +76,7 @@ function QuickNavigation() {
   return (
     <div style={containerStyle}>
       <h2 style={headingStyle}>Browse Products</h2>
+      
       <div style={buttonWrapper}>
         {/* Shop by Car */}
         <Link
