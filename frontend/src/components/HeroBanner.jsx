@@ -311,7 +311,7 @@ function HeroBanner() {
   };
 
   const headingStyle = {
-    fontSize: "clamp(24px, 6vw, 56px)",
+    fontSize: "clamp(20px, 5vw, 40px)",
     fontWeight: "700",
     color: "#ffffff",
     letterSpacing: "2px",
@@ -535,7 +535,7 @@ function HeroBanner() {
       {/* ---------- RESPONSIVE WELCOME SECTION ---------- */}
       <div style={textContainer}>
         <h2 style={headingStyle}>BENZAMODS - BEYOND ORDINARY </h2>
-        <h3 style={headerStyle}> MODIFY - STYLE - REPEAT </h3>
+        <h3 style={subHeadingStyle}> MODIFY - STYLE - REPEAT </h3>
         <p style={subHeadingStyle}>
           Premium modifications for Cars and Bikes
         </p>
