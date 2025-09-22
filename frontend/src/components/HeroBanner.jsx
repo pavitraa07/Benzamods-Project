@@ -311,7 +311,7 @@ function HeroBanner() {
   };
 
   const headingStyle = {
-    fontSize: "clamp(20px, 5vw, 40px)",
+    fontSize: "clamp(20px, 5vw, 48px)",
     fontWeight: "700",
     color: "#ffffff",
     letterSpacing: "2px",
