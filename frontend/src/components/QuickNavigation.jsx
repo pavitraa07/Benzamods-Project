@@ -35,47 +35,98 @@ function QuickNavigation() {
     flexWrap: "wrap",
   };
 
-  const buttonStyle = {
-    padding: "25px 80px",
-    fontSize: "22px",
-    fontWeight: "600",
+  const cardStyle = {
+    width: "300px",
+    height: "200px",
+    borderRadius: "20px",
+    overflow: "hidden",
+    position: "relative",
+    textDecoration: "none",
     color: "#fff",
-    backgroundColor: "#111",
-    border: "3px solid #fff",
-    borderRadius: "60px",
-    cursor: "pointer",
-    transition: "all 0.3s ease",
-    letterSpacing: "3px",
-    textTransform: "uppercase",
-    textDecoration: "none", 
-    display: "inline-block",
+    boxShadow: "0 8px 20px rgba(0,0,0,0.5)",
+    transition: "transform 0.4s ease, box-shadow 0.4s ease",
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   };
 
-  const hoverStyle = {
-    backgroundColor: "#fff",
-    color: "#000",
-    transform: "scale(1.05)",
+  const overlayStyle = {
+    position: "absolute",
+    top: "0",
+    left: "0",
+    right: "0",
+    bottom: "0",
+    background: "rgba(0,0,0,0.5)",
+    transition: "background 0.4s ease",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  };
+
+  const textStyle = {
+    fontSize: "26px",
+    fontWeight: "700",
+    letterSpacing: "2px",
+    textTransform: "uppercase",
+    zIndex: 2,
   };
 
   return (
     <div style={containerStyle}>
       <h2 style={headingStyle}>Quick Navigation</h2>
       <div style={buttonWrapper}>
+        {/* Shop by Car */}
         <Link
           to="/shopbycar"
-          style={buttonStyle}
-          onMouseEnter={(e) => Object.assign(e.target.style, hoverStyle)}
-          onMouseLeave={(e) => Object.assign(e.target.style, buttonStyle)}
+          style={{
+            ...cardStyle,
+            backgroundImage:
+              "url('https://i.pinimg.com/736x/68/23/a8/6823a85460551a26773e5e51a20fd10e.jpg')",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = "scale(1.08)";
+            e.currentTarget.style.boxShadow = "0 12px 30px rgba(255,255,255,0.6)";
+            e.currentTarget.querySelector(".overlay").style.background =
+              "rgba(0,0,0,0.3)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = "scale(1)";
+            e.currentTarget.style.boxShadow = "0 8px 20px rgba(0,0,0,0.5)";
+            e.currentTarget.querySelector(".overlay").style.background =
+              "rgba(0,0,0,0.5)";
+          }}
         >
-          Shop by Car
+          <div className="overlay" style={overlayStyle}>
+            <span style={textStyle}>Shop by Car</span>
+          </div>
         </Link>
+
+        {/* Shop by Bike */}
         <Link
           to="/shopbybike"
-          style={buttonStyle}
-          onMouseEnter={(e) => Object.assign(e.target.style, hoverStyle)}
-          onMouseLeave={(e) => Object.assign(e.target.style, buttonStyle)}
+          style={{
+            ...cardStyle,
+            backgroundImage:
+              "url('https://i.pinimg.com/736x/14/72/ab/1472ab8d1f0b95d2c6a8e5cde1b2f41d.jpg')", // Replace with your bike image
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = "scale(1.08)";
+            e.currentTarget.style.boxShadow = "0 12px 30px rgba(255,255,255,0.6)";
+            e.currentTarget.querySelector(".overlay").style.background =
+              "rgba(0,0,0,0.3)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = "scale(1)";
+            e.currentTarget.style.boxShadow = "0 8px 20px rgba(0,0,0,0.5)";
+            e.currentTarget.querySelector(".overlay").style.background =
+              "rgba(0,0,0,0.5)";
+          }}
         >
-          Shop by Bike
+          <div className="overlay" style={overlayStyle}>
+            <span style={textStyle}>Shop by Bike</span>
+          </div>
         </Link>
       </div>
 
