@@ -75,7 +75,7 @@ function QuickNavigation() {
 
   return (
     <div style={containerStyle}>
-      <h2 style={headingStyle}>Quick Navigation</h2>
+      <h2 style={headingStyle}>Browse Products</h2>
       <div style={buttonWrapper}>
         {/* Shop by Car */}
         <Link
@@ -99,7 +99,7 @@ function QuickNavigation() {
           }}
         >
           <div className="overlay" style={overlayStyle}>
-            <span style={textStyle}>Shop by Car</span>
+            <span style={textStyle}>Car Products</span>
           </div>
         </Link>
 
@@ -109,7 +109,7 @@ function QuickNavigation() {
           style={{
             ...cardStyle,
             backgroundImage:
-              "url('https://i.pinimg.com/736x/14/72/ab/1472ab8d1f0b95d2c6a8e5cde1b2f41d.jpg')", // Replace with your bike image
+              "url('https://i.pinimg.com/1200x/4f/80/81/4f8081fb3501cf40add77099bab555b8.jpg')", 
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.transform = "scale(1.08)";
@@ -125,7 +125,7 @@ function QuickNavigation() {
           }}
         >
           <div className="overlay" style={overlayStyle}>
-            <span style={textStyle}>Shop by Bike</span>
+            <span style={textStyle}>Bike Products</span>
           </div>
         </Link>
       </div>
