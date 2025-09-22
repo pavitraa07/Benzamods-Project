@@ -534,7 +534,8 @@ function HeroBanner() {
 
       {/* ---------- RESPONSIVE WELCOME SECTION ---------- */}
       <div style={textContainer}>
-        <h2 style={headingStyle}>WELCOME TO BENZAMODS!</h2>
+        <h2 style={headingStyle}>BENZAMODS - BEYOND ORDINARY </h2>
+        <h3 style={headerStyle}> MODIFY - STYLE - REPEAT </h3>
         <p style={subHeadingStyle}>
           Premium modifications for Cars and Bikes
         </p>
