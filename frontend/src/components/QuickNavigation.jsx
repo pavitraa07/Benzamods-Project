@@ -11,7 +11,7 @@ function QuickNavigation() {
   }, []);
 
   const containerStyle = {
-    backgroundColor: "#282626ff",
+    backgroundColor: "#000",
     color: "#fff",
     padding: "100px 20px",
     textAlign: "center",
