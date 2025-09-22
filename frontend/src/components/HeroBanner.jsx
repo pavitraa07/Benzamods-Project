@@ -16,17 +16,16 @@ function HeroBanner() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024); // ✅ Tablet also responsive
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024); // Tablet + Mobile
   const [userName, setUserName] = useState("");
   const [cartCount, setCartCount] = useState(0);
   const navigate = useNavigate();
   const [isFirstRender, setIsFirstRender] = useState(true);
   const [prevSidebarOpen, setPrevSidebarOpen] = useState(false);
 
-  useEffect(() => {
-    setIsFirstRender(false);
-  }, []);
+  useEffect(() => setIsFirstRender(false), []);
 
+  // Auto slider
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
@@ -34,35 +33,28 @@ function HeroBanner() {
     return () => clearInterval(interval);
   }, [images.length]);
 
+  // Cart updates
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
     setCartCount(storedCart.length);
 
     const onCartUpdated = (e) => {
-      if (e && e.detail && typeof e.detail.count === "number") {
-        setCartCount(e.detail.count);
-      } else {
-        const c = JSON.parse(localStorage.getItem("cart")) || [];
-        setCartCount(c.length);
-      }
+      if (e?.detail?.count) setCartCount(e.detail.count);
+      else setCartCount(JSON.parse(localStorage.getItem("cart"))?.length || 0);
     };
-
     const onStorage = (ev) => {
-      if (ev.key === "cart") {
-        const c = JSON.parse(localStorage.getItem("cart")) || [];
-        setCartCount(c.length);
-      }
+      if (ev.key === "cart") setCartCount(JSON.parse(localStorage.getItem("cart"))?.length || 0);
     };
 
     window.addEventListener("cartUpdated", onCartUpdated);
     window.addEventListener("storage", onStorage);
-
     return () => {
       window.removeEventListener("cartUpdated", onCartUpdated);
       window.removeEventListener("storage", onStorage);
     };
   }, []);
 
+  // Fonts + login
   useEffect(() => {
     const link = document.createElement("link");
     link.href =
@@ -75,21 +67,14 @@ function HeroBanner() {
       setIsLoggedIn(true);
       try {
         const decoded = jwtDecode(token);
-        if (decoded?.name) {
-          setUserName(decoded.name);
-        } else if (decoded?.username) {
-          setUserName(decoded.username);
-        } else if (decoded?.email) {
-          setUserName(decoded.email.split("@")[0]);
-        }
+        setUserName(decoded?.name || decoded?.username || decoded?.email?.split("@")[0] || "");
       } catch (error) {
         console.error("Invalid token:", error);
       }
     }
 
-    const handleResize = () => setIsMobile(window.innerWidth <= 1024); // ✅ Tablet responsive
+    const handleResize = () => setIsMobile(window.innerWidth <= 1024);
     window.addEventListener("resize", handleResize);
-
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
@@ -97,8 +82,7 @@ function HeroBanner() {
     const element = document.getElementById(id);
     if (element) {
       const yOffset = -80;
-      const y =
-        element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
       window.scrollTo({ top: y, behavior: "smooth" });
     }
   };
@@ -153,44 +137,6 @@ function HeroBanner() {
     fontFamily: "'Orbitron', sans-serif",
     letterSpacing: "2px",
     textTransform: "uppercase",
-    opacity: 0,
-    animation: sidebarOpen
-      ? "fadeInRight 0.6s forwards"
-      : "fadeInRight 0.6s forwards",
-    animationDelay: "0.2s",
-  };
-
-  const confirmOverlay = {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
-    backgroundColor: "rgba(0,0,0,0.6)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 2000,
-  };
-
-  const confirmBox = {
-    background: "#1c1c1c",
-    padding: "25px",
-    borderRadius: "10px",
-    textAlign: "center",
-    width: "300px",
-    color: "#fff",
-    animation: "scaleIn 0.3s ease",
-  };
-
-  const confirmBtn = {
-    padding: "10px 20px",
-    margin: "10px",
-    border: "none",
-    borderRadius: "6px",
-    cursor: "pointer",
-    fontWeight: "600",
-    transition: "all 0.3s ease",
   };
 
   const bannerStyle = {
@@ -209,57 +155,47 @@ function HeroBanner() {
   const headerStyle = {
     display: "flex",
     alignItems: "center",
-    justifyContent: "flex-start",
-    gap: "50px",
-    padding: "20px 40px",
+    justifyContent: "space-between",
+    padding: "20px",
     position: "absolute",
     top: 0,
     left: 0,
     width: "100%",
     zIndex: 3,
-    animation: "fadeInDown 1s ease",
-  };
-
-  const logoContainer = {
-    position: "relative",
-    display: "flex",
-    alignItems: "center",
+    flexWrap: "wrap",
   };
 
   const logoStyle = { height: "50px", marginRight: "15px" };
 
   const titleStyle = {
-    fontSize: "28px",
+    fontSize: "clamp(18px, 2vw, 28px)",
     fontWeight: "700",
     letterSpacing: "3px",
     color: "#fff",
     textShadow: "0 0 15px rgba(255,255,255,0.7)",
-    animation: "fadeInDown 1.5s ease",
   };
 
   const userNameStyle = {
-    position: "absolute",
-    top: "55px",
-    left: "65px",
-    fontSize: "18px",
+    fontSize: "14px",
     fontWeight: "500",
     color: "#fff",
     textShadow: "0 0 8px rgba(255,255,255,0.7)",
-    letterSpacing: "2px",
+    letterSpacing: "1px",
   };
 
   const navContainerStyle = {
     display: "flex",
-    gap: "15px",
-    marginLeft: "200px",
-    animation: "fadeInRight 1s ease",
+    flexWrap: "wrap",
+    gap: "10px",
+    justifyContent: "center",
+    marginTop: "10px",
   };
 
   const navButtonStyle = {
     background: "transparent",
     color: "#fff",
     border: "none",
-    fontSize: "16px",
+    fontSize: "14px",
     cursor: "pointer",
     letterSpacing: "1px",
     transition: "all 0.3s ease",
@@ -304,30 +240,30 @@ function HeroBanner() {
     transform: "translate(-50%, -50%)",
     textAlign: "center",
     zIndex: 2,
-    animation: "fadeInUp 2s ease",
+    width: "90%",
   };
 
   const headingStyle = {
-    fontSize: "56px",
+    fontSize: "clamp(24px, 6vw, 56px)",
     fontWeight: "700",
     color: "#ffffff",
-    letterSpacing: "4px",
+    letterSpacing: "2px",
     textShadow: "0 0 25px rgba(255,255,255,0.9)",
     marginBottom: "10px",
   };
 
   const subHeadingStyle = {
-    fontSize: "24px",
+    fontSize: "clamp(14px, 3vw, 24px)",
     fontWeight: "500",
     color: "#ffffff",
-    letterSpacing: "2px",
+    letterSpacing: "1px",
     textShadow: "0 0 10px rgba(255,255,255,0.8)",
-    marginBottom: "30px",
+    marginBottom: "20px",
   };
 
   const buttonStyle = {
-    padding: "12px 30px",
-    fontSize: "18px",
+    padding: "10px 20px",
+    fontSize: "clamp(12px, 2vw, 18px)",
     fontWeight: "700",
     letterSpacing: "2px",
     backgroundColor: "#fcfcfcff",
@@ -346,119 +282,9 @@ function HeroBanner() {
     boxShadow: "0 0 25px rgba(255,255,255,0.9)",
   };
 
-  const navButtons = (
-    <>
-      <button style={navButtonStyle} onClick={() => handleScroll("shop")}>
-        Shop
-      </button>
-      <button style={navButtonStyle} onClick={() => handleScroll("services")}>
-        Additional Services
-      </button>
-      <button style={navButtonStyle} onClick={() => handleScroll("reviews")}>
-        Reviews
-      </button>
-      {isLoggedIn ? (
-        <button
-          style={navButtonStyle}
-          onClick={() => setShowLogoutConfirm(true)}
-        >
-          Logout
-        </button>
-      ) : (
-        <button style={navButtonStyle} onClick={() => navigate("/login")}>
-          Login
-        </button>
-      )}
-      <button style={navButtonStyle} onClick={() => navigate("/contact")}>
-        <FaEnvelope /> Contact
-      </button>
-      <button style={navButtonStyle} onClick={() => navigate("/cart")}>
-        <FiShoppingCart /> Cart
-        {isLoggedIn && cartCount > 0 && (
-          <span
-            style={{
-              position: "absolute",
-              top: "-8px",
-              right: "-12px",
-              background: "red",
-              color: "white",
-              borderRadius: "50%",
-              padding: "2px 6px",
-              fontSize: "12px",
-              fontWeight: "700",
-            }}
-          >
-            {cartCount}
-          </span>
-        )}
-      </button>
-    </>
-  );
-
-  const sidebarButtons = isMobile ? (
-    <>
-      <button style={sidebarBtnStyle} onClick={() => handleScroll("shop")}>
-        Shop
-      </button>
-      <button style={sidebarBtnStyle} onClick={() => handleScroll("services")}>
-        Additional Services
-      </button>
-      <button style={sidebarBtnStyle} onClick={() => handleScroll("reviews")}>
-        Reviews
-      </button>
-      {isLoggedIn ? (
-        <button
-          style={sidebarBtnStyle}
-          onClick={() => setShowLogoutConfirm(true)}
-        >
-          Logout
-        </button>
-      ) : (
-        <button style={sidebarBtnStyle} onClick={() => navigate("/login")}>
-          Login
-        </button>
-      )}
-      <button style={sidebarBtnStyle} onClick={() => navigate("/contact")}>
-        <FaEnvelope /> Contact
-      </button>
-      <button style={sidebarBtnStyle} onClick={() => navigate("/cart")}>
-        <FiShoppingCart /> Cart
-        {isLoggedIn && cartCount > 0 && (
-          <span
-            style={{
-              marginLeft: "8px",
-              background: "red",
-              color: "white",
-              borderRadius: "50%",
-              padding: "2px 6px",
-              fontSize: "12px",
-              fontWeight: "700",
-            }}
-          >
-            {cartCount}
-          </span>
-        )}
-      </button>
-      <button style={sidebarBtnStyle} onClick={() => navigate("/adminpanel")}>
-        Admin Panel
-      </button>
-      <button style={sidebarBtnStyle} onClick={() => navigate("/myaccount")}>
-        My Account
-      </button>
-    </>
-  ) : (
-    <>
-      <button style={sidebarBtnStyle} onClick={() => navigate("/adminpanel")}>
-        Admin Panel
-      </button>
-      <button style={sidebarBtnStyle} onClick={() => navigate("/myaccount")}>
-        My Account
-      </button>
-    </>
-  );
-
   return (
     <div style={bannerStyle}>
+      {/* Sidebar */}
       <div style={sidebarStyle}>
         <button
           style={{
@@ -476,137 +302,79 @@ function HeroBanner() {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            transition: "all 0.3s ease",
           }}
           onClick={toggleSidebar}
         >
           <FiX />
         </button>
-        <div
-          style={{
-            marginTop: "70px",
-            display: "flex",
-            flexDirection: "column",
-            gap: "15px",
-          }}
-        >
-          {sidebarButtons}
+        <div style={{ marginTop: "70px", display: "flex", flexDirection: "column", gap: "15px" }}>
+          <button style={sidebarBtnStyle} onClick={() => handleScroll("shop")}>Shop</button>
+          <button style={sidebarBtnStyle} onClick={() => handleScroll("services")}>Additional Services</button>
+          <button style={sidebarBtnStyle} onClick={() => handleScroll("reviews")}>Reviews</button>
+          {isLoggedIn ? (
+            <button style={sidebarBtnStyle} onClick={handleLogout}>Logout</button>
+          ) : (
+            <button style={sidebarBtnStyle} onClick={() => navigate("/login")}>Login</button>
+          )}
+          <button style={sidebarBtnStyle} onClick={() => navigate("/contact")}>Contact</button>
+          <button style={sidebarBtnStyle} onClick={() => navigate("/cart")}>Cart</button>
         </div>
       </div>
 
+      {/* Header */}
       <div style={headerStyle}>
-        <button
-          onClick={toggleSidebar}
-          style={{
-            background: "none",
-            border: "none",
-            color: "#fff",
-            fontSize: "30px",
-            cursor: "pointer",
-            transition: "transform 0.3s ease",
-          }}
-        >
+        <button onClick={toggleSidebar} style={{ background: "none", border: "none", color: "#fff", fontSize: "30px", cursor: "pointer" }}>
           <FiMenu />
         </button>
-        <div style={logoContainer}>
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
           <img src={bmlogo} alt="Benzamods Logo" style={logoStyle} />
           <h1 style={titleStyle}>Benzamods</h1>
-          {isLoggedIn && userName && (
-            <p style={userNameStyle}>Hey! {userName}</p>
-          )}
+          {isLoggedIn && <p style={userNameStyle}>Hey! {userName}</p>}
         </div>
-        {!isMobile && <div style={navContainerStyle}>{navButtons}</div>}
+        {!isMobile && (
+          <div style={navContainerStyle}>
+            <button style={navButtonStyle} onClick={() => handleScroll("shop")}>Shop</button>
+            <button style={navButtonStyle} onClick={() => handleScroll("services")}>Services</button>
+            <button style={navButtonStyle} onClick={() => handleScroll("reviews")}>Reviews</button>
+            {isLoggedIn ? (
+              <button style={navButtonStyle} onClick={handleLogout}>Logout</button>
+            ) : (
+              <button style={navButtonStyle} onClick={() => navigate("/login")}>Login</button>
+            )}
+            <button style={navButtonStyle} onClick={() => navigate("/contact")}>
+              <FaEnvelope /> Contact
+            </button>
+            <button style={navButtonStyle} onClick={() => navigate("/cart")}>
+              <FiShoppingCart /> Cart
+            </button>
+          </div>
+        )}
       </div>
 
+      {/* Slider */}
       <div style={sliderWrapper}>
-        {images.map((img, index) => (
-          <div
-            key={index}
-            style={{ ...slideStyle, backgroundImage: `url(${img})` }}
-          />
+        {images.map((img, idx) => (
+          <div key={idx} style={{ ...slideStyle, backgroundImage: `url(${img})` }} />
         ))}
       </div>
-
       <div style={overlayStyle}></div>
 
+      {/* Text */}
       <div style={textContainer}>
         <h2 style={headingStyle}>WELCOME TO BENZAMODS!</h2>
         <p style={subHeadingStyle}>Premium modifications for Cars and Bikes</p>
-        <div
-          style={{
-            marginLeft: "120px",
-            display: "flex",
-            flexDirection: "row",
-            gap: "20px",
-            alignItems: "center",
-          }}
-        >
-          <Link
-            to="services/priority-services"
-            style={buttonStyle}
-            onMouseEnter={(e) => Object.assign(e.target.style, buttonHover)}
-            onMouseLeave={(e) => Object.assign(e.target.style, buttonStyle)}
-          >
-            Services
-          </Link>
-          <Link
-            to="/portfolio"
-            style={buttonStyle}
-            onMouseEnter={(e) => Object.assign(e.target.style, buttonHover)}
-            onMouseLeave={(e) => Object.assign(e.target.style, buttonStyle)}
-          >
-            Benzamods Portfolio
-          </Link>
+        <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "15px" }}>
+          <Link to="services/priority-services" style={buttonStyle} onMouseEnter={(e) => Object.assign(e.target.style, buttonHover)} onMouseLeave={(e) => Object.assign(e.target.style, buttonStyle)}>Services</Link>
+          <Link to="/portfolio" style={buttonStyle} onMouseEnter={(e) => Object.assign(e.target.style, buttonHover)} onMouseLeave={(e) => Object.assign(e.target.style, buttonStyle)}>Benzamods Portfolio</Link>
         </div>
       </div>
 
-      {showLogoutConfirm && (
-        <div style={confirmOverlay}>
-          <div style={confirmBox}>
-            <h3>Are you sure you want to logout?</h3>
-            <div>
-              <button
-                style={{ ...confirmBtn, background: "#dc2626", color: "#fff" }}
-                onClick={handleLogout}
-              >
-                Yes
-              </button>
-              <button
-                style={{ ...confirmBtn, background: "#374151", color: "#fff" }}
-                onClick={() => setShowLogoutConfirm(false)}
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       <style>{`
-        @keyframes fadeInUp {
-          from { opacity: 0; transform: translate(-50%, -40%); }
-          to { opacity: 1; transform: translate(-50%, -50%); }
-        }
-        @keyframes fadeInDown {
-          from { opacity: 0; transform: translateY(-30px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeInRight {
-          from { opacity: 0; transform: translateX(30px); }
-          to { opacity: 1; transform: translateX(0); }
-        }
-        @keyframes slideInLeft {
-          from { transform: translateX(-100%); }
-          to { transform: translateX(0); }
-        }
-        @keyframes slideOutRight {
-          from { transform: translateX(0); }
-          to { transform: translateX(-100%); }
-        }
-        @keyframes scaleIn {
-          from { transform: scale(0.8); opacity: 0; }
-          to { transform: scale(1); opacity: 1; }
-        }
+        @keyframes fadeInUp { from { opacity: 0; transform: translate(-50%, -40%); } to { opacity: 1; transform: translate(-50%, -50%); } }
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInRight { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes slideInLeft { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+        @keyframes slideOutRight { from { transform: translateX(0); } to { transform: translateX(-100%); } }
       `}</style>
     </div>
   );
