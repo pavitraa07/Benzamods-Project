@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaEnvelope } from "react-icons/fa";
 import { FiShoppingCart, FiMenu, FiX } from "react-icons/fi";
-import jwtDecode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 
 import bm8 from "../assets/bm8.jpg";
 import bm10 from "../assets/bm10.jpg";
@@ -26,7 +26,7 @@ function HeroBanner() {
   // Initial render flag
   useEffect(() => setIsFirstRender(false), []);
 
-  // Image slider
+  // Slider auto change
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
@@ -34,7 +34,7 @@ function HeroBanner() {
     return () => clearInterval(interval);
   }, [images.length]);
 
-  // Cart count
+  // Cart count from localStorage
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
     setCartCount(storedCart.length);
@@ -43,22 +43,25 @@ function HeroBanner() {
       if (e?.detail?.count >= 0) setCartCount(e.detail.count);
       else setCartCount(JSON.parse(localStorage.getItem("cart"))?.length || 0);
     };
+
     const onStorage = (ev) => {
       if (ev.key === "cart") setCartCount(JSON.parse(localStorage.getItem("cart"))?.length || 0);
     };
 
     window.addEventListener("cartUpdated", onCartUpdated);
     window.addEventListener("storage", onStorage);
+
     return () => {
       window.removeEventListener("cartUpdated", onCartUpdated);
       window.removeEventListener("storage", onStorage);
     };
   }, []);
 
-  // Auth & responsiveness
+  // Check login and username
   useEffect(() => {
     const link = document.createElement("link");
-    link.href = "https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap";
+    link.href =
+      "https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap";
     link.rel = "stylesheet";
     document.head.appendChild(link);
 
@@ -67,7 +70,9 @@ function HeroBanner() {
       setIsLoggedIn(true);
       try {
         const decoded = jwtDecode(token);
-        setUserName(decoded?.name || decoded?.username || decoded?.email?.split("@")[0] || "");
+        if (decoded?.name) setUserName(decoded.name);
+        else if (decoded?.username) setUserName(decoded.username);
+        else if (decoded?.email) setUserName(decoded.email.split("@")[0]);
       } catch (error) {
         console.error("Invalid token:", error);
       }
@@ -101,6 +106,48 @@ function HeroBanner() {
   };
 
   // Styles
+  const sidebarStyle = {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "250px",
+    height: "100%",
+    backgroundColor: "#111",
+    color: "#fff",
+    padding: "20px",
+    zIndex: 1000,
+    display: "flex",
+    flexDirection: "column",
+    gap: "20px",
+    transform: sidebarOpen ? "translateX(0)" : "translateX(-100%)",
+    transition: "transform 0.5s cubic-bezier(0.77, 0, 0.175, 1)",
+    animation: isFirstRender
+      ? "none"
+      : sidebarOpen
+      ? "slideInLeft 0.5s forwards"
+      : prevSidebarOpen
+      ? "slideOutRight 0.8s forwards"
+      : "none",
+  };
+
+  const sidebarBtnStyle = {
+    padding: "12px",
+    fontSize: "16px",
+    borderRadius: "8px",
+    border: "1px solid #000",
+    cursor: "pointer",
+    background: "#fff",
+    color: "#000",
+    fontWeight: "700",
+    textAlign: "center",
+    fontFamily: "'Orbitron', sans-serif",
+    letterSpacing: "2px",
+    textTransform: "uppercase",
+    opacity: 0,
+    animation: sidebarOpen ? "fadeInRight 0.6s forwards" : "fadeInRight 0.6s forwards",
+    animationDelay: "0.2s",
+  };
+
   const bannerStyle = {
     height: "100vh",
     width: "100%",
@@ -119,7 +166,7 @@ function HeroBanner() {
     alignItems: "center",
     justifyContent: "flex-start",
     gap: "50px",
-    padding: "20px 60px", // moved a bit right
+    padding: "20px 40px",
     position: "absolute",
     top: 0,
     left: 0,
@@ -128,29 +175,38 @@ function HeroBanner() {
     animation: "fadeInDown 1s ease",
   };
 
-  const logoContainer = { display: "flex", flexDirection: "column", alignItems: "flex-start" };
-  const logoStyle = { height: "50px" };
+  const logoContainer = {
+    position: "relative",
+    display: "flex",
+    alignItems: "center",
+  };
+
+  const logoStyle = { height: "50px", marginRight: "15px" };
+
   const titleStyle = {
     fontSize: "28px",
     fontWeight: "700",
     letterSpacing: "3px",
     color: "#fff",
     textShadow: "0 0 15px rgba(255,255,255,0.7)",
-    marginTop: "5px",
+    animation: "fadeInDown 1.5s ease",
   };
 
   const userNameStyle = {
-    fontSize: "22px", // bigger
-    fontWeight: "600",
+    position: "absolute",
+    top: "55px",
+    left: "0px",
+    fontSize: "22px",
+    fontWeight: "700",
     color: "#fff",
-    textShadow: "0 0 10px rgba(255,255,255,0.8)",
-    marginTop: "5px",
+    textShadow: "0 0 10px rgba(255,255,255,0.9)",
+    letterSpacing: "2px",
   };
 
   const navContainerStyle = {
     display: "flex",
-    gap: "20px",
-    marginLeft: "auto", // pushed right
+    gap: "15px",
+    marginLeft: "auto", // moves navbar to right
     animation: "fadeInRight 1s ease",
   };
 
@@ -179,40 +235,173 @@ function HeroBanner() {
     zIndex: 0,
   };
 
-  const slideStyle = { minWidth: "100%", height: "100%", backgroundSize: "cover", backgroundPosition: "center" };
-  const overlayStyle = { position: "absolute", top: 0, left: 0, width: "100%", height: "100%", backgroundColor: "rgba(0,0,0,0.5)", zIndex: 1 };
+  const slideStyle = {
+    minWidth: "100%",
+    height: "100%",
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+  };
 
-  const textContainer = { position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", textAlign: "center", zIndex: 2, animation: "fadeInUp 2s ease" };
-  const headingStyle = { fontSize: "56px", fontWeight: "700", color: "#ffffff", letterSpacing: "4px", textShadow: "0 0 25px rgba(255,255,255,0.9)", marginBottom: "10px" };
-  const subHeadingStyle = { fontSize: "24px", fontWeight: "500", color: "#ffffff", letterSpacing: "2px", textShadow: "0 0 10px rgba(255,255,255,0.8)", marginBottom: "30px" };
-  const buttonStyle = { padding: "12px 30px", fontSize: "18px", fontWeight: "700", letterSpacing: "2px", backgroundColor: "#fcfcfcff", color: "#0c0202ff", border: "none", borderRadius: "25px", cursor: "pointer", textDecoration: "none", boxShadow: "0 0 20px rgba(8, 8, 8, 0.6)", transition: "all 0.3s ease" };
-  const buttonHover = { backgroundColor: "#000000ff", color: "#fffefeff", boxShadow: "0 0 25px rgba(255,255,255,0.9)" };
+  const overlayStyle = {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(0,0,0,0.5)",
+    zIndex: 1,
+  };
 
-  // Navbar Buttons
+  const textContainer = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    textAlign: "center",
+    zIndex: 2,
+    animation: "fadeInUp 2s ease",
+  };
+
+  const headingStyle = {
+    fontSize: "60px",
+    fontWeight: "700",
+    color: "#ffffff",
+    letterSpacing: "4px",
+    textShadow: "0 0 25px rgba(255,255,255,0.9)",
+    marginBottom: "15px",
+  };
+
+  const subHeadingStyle = {
+    fontSize: "26px",
+    fontWeight: "500",
+    color: "#ffffff",
+    letterSpacing: "2px",
+    textShadow: "0 0 10px rgba(255,255,255,0.8)",
+    marginBottom: "30px",
+  };
+
+  const buttonStyle = {
+    padding: "12px 30px",
+    fontSize: "18px",
+    fontWeight: "700",
+    letterSpacing: "2px",
+    backgroundColor: "#fcfcfcff",
+    color: "#0c0202ff",
+    border: "none",
+    borderRadius: "25px",
+    cursor: "pointer",
+    textDecoration: "none",
+    boxShadow: "0 0 20px rgba(8, 8, 8, 0.6)",
+    transition: "all 0.3s ease",
+  };
+
+  const buttonHover = {
+    backgroundColor: "#000000ff",
+    color: "#fffefeff",
+    boxShadow: "0 0 25px rgba(255,255,255,0.9)",
+  };
+
   const navButtons = (
     <>
       <button style={navButtonStyle} onClick={() => handleScroll("shop")}>Shop</button>
       <button style={navButtonStyle} onClick={() => handleScroll("services")}>Additional Services</button>
       <button style={navButtonStyle} onClick={() => handleScroll("reviews")}>Reviews</button>
-      {isLoggedIn ? <button style={navButtonStyle} onClick={() => setShowLogoutConfirm(true)}>Logout</button> : <button style={navButtonStyle} onClick={() => navigate("/login")}>Login</button>}
-      <button style={navButtonStyle} onClick={() => navigate("/contact")}><FaEnvelope /> Contact</button>
+      {isLoggedIn ? (
+        <button style={navButtonStyle} onClick={() => setShowLogoutConfirm(true)}>Logout</button>
+      ) : (
+        <button style={navButtonStyle} onClick={() => navigate("/login")}>Login</button>
+      )}
+      <button style={navButtonStyle} onClick={() => navigate("/contact")}>
+        <FaEnvelope /> Contact
+      </button>
       <button style={navButtonStyle} onClick={() => navigate("/cart")}>
         <FiShoppingCart /> Cart
-        {cartCount > 0 && <span style={{position: "absolute", top: "-8px", right: "-12px", background: "red", color: "white", borderRadius: "50%", padding: "2px 6px", fontSize: "12px", fontWeight: "700"}}>{cartCount}</span>}
+        {isLoggedIn && cartCount > 0 && (
+          <span style={{
+            position: "absolute",
+            top: "-8px",
+            right: "-12px",
+            background: "red",
+            color: "white",
+            borderRadius: "50%",
+            padding: "2px 6px",
+            fontSize: "12px",
+            fontWeight: "700",
+          }}>{cartCount}</span>
+        )}
       </button>
     </>
   );
 
-  // Sidebar buttons same as before (omitted here for brevity, keep your previous sidebarButtons logic)
+  const sidebarButtons = isMobile ? (
+    <>
+      <button style={sidebarBtnStyle} onClick={() => handleScroll("shop")}>Shop</button>
+      <button style={sidebarBtnStyle} onClick={() => handleScroll("services")}>Additional Services</button>
+      <button style={sidebarBtnStyle} onClick={() => handleScroll("reviews")}>Reviews</button>
+      {isLoggedIn ? (
+        <button style={sidebarBtnStyle} onClick={() => setShowLogoutConfirm(true)}>Logout</button>
+      ) : (
+        <button style={sidebarBtnStyle} onClick={() => navigate("/login")}>Login</button>
+      )}
+      <button style={sidebarBtnStyle} onClick={() => navigate("/contact")}><FaEnvelope /> Contact</button>
+      <button style={sidebarBtnStyle} onClick={() => navigate("/cart")}>
+        <FiShoppingCart /> Cart
+        {isLoggedIn && cartCount > 0 && (
+          <span style={{
+            marginLeft: "8px",
+            background: "red",
+            color: "white",
+            borderRadius: "50%",
+            padding: "2px 6px",
+            fontSize: "12px",
+            fontWeight: "700",
+          }}>{cartCount}</span>
+        )}
+      </button>
+      <button style={sidebarBtnStyle} onClick={() => navigate("/adminpanel")}>Admin Panel</button>
+      <button style={sidebarBtnStyle} onClick={() => navigate("/myaccount")}>My Account</button>
+    </>
+  ) : (
+    <>
+      <button style={sidebarBtnStyle} onClick={() => navigate("/adminpanel")}>Admin Panel</button>
+      <button style={sidebarBtnStyle} onClick={() => navigate("/myaccount")}>My Account</button>
+    </>
+  );
 
   return (
     <div style={bannerStyle}>
-      {/* Sidebar */}
-      {/* ... keep previous sidebar code ... */}
+      <div style={sidebarStyle}>
+        <button style={{
+          position: "absolute",
+          top: "15px",
+          right: "15px",
+          background: "#000",
+          color: "#fff",
+          border: "none",
+          borderRadius: "50%",
+          width: "35px",
+          height: "35px",
+          fontSize: "20px",
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          transition: "all 0.3s ease",
+        }} onClick={toggleSidebar}><FiX /></button>
+        <div style={{ marginTop: "70px", display: "flex", flexDirection: "column", gap: "15px" }}>
+          {sidebarButtons}
+        </div>
+      </div>
 
-      {/* Header */}
       <div style={headerStyle}>
-        <button onClick={toggleSidebar} style={{ background: "none", border: "none", color: "#fff", fontSize: "30px", cursor: "pointer" }}><FiMenu /></button>
+        <button onClick={toggleSidebar} style={{
+          background: "none",
+          border: "none",
+          color: "#fff",
+          fontSize: "30px",
+          cursor: "pointer",
+          transition: "transform 0.3s ease",
+        }}><FiMenu /></button>
         <div style={logoContainer}>
           <img src={bmlogo} alt="Benzamods Logo" style={logoStyle} />
           <h1 style={titleStyle}>Benzamods</h1>
@@ -221,28 +410,55 @@ function HeroBanner() {
         {!isMobile && <div style={navContainerStyle}>{navButtons}</div>}
       </div>
 
-      {/* Slider */}
-      <div style={sliderWrapper}>{images.map((img, i) => <div key={i} style={{ ...slideStyle, backgroundImage: `url(${img})` }} />)}</div>
+      <div style={sliderWrapper}>
+        {images.map((img, index) => (
+          <div key={index} style={{ ...slideStyle, backgroundImage: `url(${img})` }} />
+        ))}
+      </div>
+
       <div style={overlayStyle}></div>
 
-      {/* Welcome text */}
       <div style={textContainer}>
         <h2 style={headingStyle}>WELCOME TO BENZAMODS!</h2>
         <p style={subHeadingStyle}>Premium modifications for Cars and Bikes</p>
-        <div style={{ marginLeft: "120px", display: "flex", gap: "20px", alignItems: "center" }}>
-          <Link to="services/priority-services" style={buttonStyle} onMouseEnter={e => Object.assign(e.target.style, buttonHover)} onMouseLeave={e => Object.assign(e.target.style, buttonStyle)}>Services</Link>
-          <Link to="/portfolio" style={buttonStyle} onMouseEnter={e => Object.assign(e.target.style, buttonHover)} onMouseLeave={e => Object.assign(e.target.style, buttonStyle)}>Benzamods Portfolio</Link>
+        <div style={{ display: "flex", flexDirection: "row", gap: "20px", justifyContent: "center" }}>
+          <Link to="services/priority-services" style={buttonStyle}
+            onMouseEnter={(e) => Object.assign(e.target.style, buttonHover)}
+            onMouseLeave={(e) => Object.assign(e.target.style, buttonStyle)}>Services</Link>
+          <Link to="/portfolio" style={buttonStyle}
+            onMouseEnter={(e) => Object.assign(e.target.style, buttonHover)}
+            onMouseLeave={(e) => Object.assign(e.target.style, buttonStyle)}>Benzamods Portfolio</Link>
         </div>
       </div>
 
-      {/* Logout confirm */}
       {showLogoutConfirm && (
-        <div style={{ position: "fixed", top: 0, left: 0, width: "100%", height: "100%", backgroundColor: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 2000 }}>
-          <div style={{ background: "#1c1c1c", padding: "25px", borderRadius: "10px", textAlign: "center", width: "300px", color: "#fff", animation: "scaleIn 0.3s ease" }}>
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          backgroundColor: "rgba(0,0,0,0.6)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 2000,
+        }}>
+          <div style={{
+            background: "#1c1c1c",
+            padding: "25px",
+            borderRadius: "10px",
+            textAlign: "center",
+            width: "300px",
+            color: "#fff",
+            animation: "scaleIn 0.3s ease",
+          }}>
             <h3>Are you sure you want to logout?</h3>
             <div>
-              <button style={{ padding: "10px 20px", margin: "10px", border: "none", borderRadius: "6px", cursor: "pointer", fontWeight: "600", background: "#dc2626", color: "#fff" }} onClick={handleLogout}>Yes</button>
-              <button style={{ padding: "10px 20px", margin: "10px", border: "none", borderRadius: "6px", cursor: "pointer", fontWeight: "600", background: "#374151", color: "#fff" }} onClick={() => setShowLogoutConfirm(false)}>Cancel</button>
+              <button style={{ padding: "10px 20px", margin: "10px", border: "none", borderRadius: "6px", cursor: "pointer", fontWeight: "600", background: "#dc2626", color: "#fff" }}
+                onClick={handleLogout}>Yes</button>
+              <button style={{ padding: "10px 20px", margin: "10px", border: "none", borderRadius: "6px", cursor: "pointer", fontWeight: "600", background: "#374151", color: "#fff" }}
+                onClick={() => setShowLogoutConfirm(false)}>Cancel</button>
             </div>
           </div>
         </div>
