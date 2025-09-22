@@ -16,7 +16,7 @@ function FeaturedServices() {
   }, []);
 
   const containerStyle = {
-    backgroundColor: "#171717ff",
+    backgroundColor: "#151313ff",
     color: "#fff",
     padding: "100px 20px",
     textAlign: "center",
