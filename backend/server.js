@@ -5,7 +5,6 @@ import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
 import connectDB from "./config/db.js";
-
 import productRoutes from "./routes/productRoutes.js";
 import serviceRoutes from "./routes/serviceRoutes.js";
 import priorityServiceRoutes from "./routes/priorityServicesRoutes.js";
@@ -58,7 +57,7 @@ app.use("/api/admins", adminRoutes);
 
 // Health check route
 app.get("/", (_req, res) => {
-  res.json({ ok: true, message: "Benzamods API running 🚀" });
+  res.json({ ok: true, message: "Benzamods API running " });
 });
 
 // Start server
@@ -67,10 +66,10 @@ const PORT = process.env.PORT || 5000;
 connectDB()
   .then(() => {
     app.listen(PORT, () => {
-      console.log(`✅ Backend running on port ${PORT}`);
+      console.log(` Backend running on port ${PORT}`);
     });
   })
   .catch((err) => {
-    console.error("❌ Failed to connect to DB:", err);
+    console.error(" Failed to connect to DB:", err);
     process.exit(1);
   });
